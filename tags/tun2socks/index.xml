@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>tun2socks on Rockwinder`s Blog</title>
-    <link>https://example.com/tags/tun2socks/</link>
+    <link>https://rockwinder.github.io/tags/tun2socks/</link>
     <description>Recent content in tun2socks on Rockwinder`s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Tue, 05 Mar 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://example.com/tags/tun2socks/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://rockwinder.github.io/tags/tun2socks/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>tun2socks</title>
-      <link>https://example.com/post/tun2socks/</link>
+      <link>https://rockwinder.github.io/post/tun2socks/</link>
       <pubDate>Tue, 05 Mar 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://example.com/post/tun2socks/</guid>
+      <guid>https://rockwinder.github.io/post/tun2socks/</guid>
       <description>翻墙的几种方式 vpn和各种自定义的vpn；它们是把iOS的ip数据包的内容通过一个tcp转发到vpn服务器，然后在服务器上创建一个tun虚拟</description>
     </item>
     
