@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noodp"/>
+    <meta name="author" content="Rockwinder">
+    <meta name="description" content="Rockwinder 的个人博客">
+    
+    
+    <link rel="prev" href="https://rockwinder.github.io/post/tun2socks/" />
+    
+    <link rel="canonical" href="https://rockwinder.github.io/post/golang_channel/" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <title>
+        
+        
+            如何优雅的关闭Go Channel | Rockwinder`s Blog
+        
+    </title>
+    <meta name="title" content="如何优雅的关闭Go Channel | Rockwinder`s Blog">
+    
+<link rel="stylesheet" href="/css/main.min.css">
+
+
+    
+    
+ 
+
+<script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https:\/\/rockwinder.github.io\/"
+    },
+    "articleSection" : "post",
+    "name" : "如何优雅的关闭Go Channel",
+    "headline" : "如何优雅的关闭Go Channel",
+    "description" : "Channel关闭原则 不要在消费端关闭channel，不要在有多个并行的生产者时对channel执行关闭操作。 也就是说应该只在[唯一的或者最",
+    "inLanguage" : "zh-cn",
+    "author" : "Rockwinder",
+    "creator" : "Rockwinder",
+    "publisher": "Rockwinder",
+    "accountablePerson" : "Rockwinder",
+    "copyrightHolder" : "Rockwinder",
+    "copyrightYear" : "2020",
+    "datePublished": "2020-05-20 11:35:31 \x2b0700 \x2b07",
+    "dateModified" : "2020-05-20 11:35:31 \x2b0700 \x2b07",
+    "url" : "https:\/\/rockwinder.github.io\/post\/golang_channel\/",
+    "wordCount" : "2169",
+    "keywords" : [ "channel", "Rockwinder`s Blog"]
+}
+</script>
+
+  </head>
+    <body class="">
+        <div class="wrapper">
+            <nav class="navbar">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+    <div class="container">
+        
+            <div class="navbar-header header-back2home-logo">
+                <span class="logo_mark" >>$</span>
+                <a href="https://rockwinder.github.io/">
+                    <span class="logo_text" >cd /home/</span>
+                    <span class="logo_cursor" ></span>
+                </a>
+            </div>
+        
+        <div class="navbar-right">
+                
+                <span class="menu">
+                
+                <a class="menu-item" href="/post/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+                <span class="divide"></span>
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a>
+                </span>
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+     <div class="container">
+        <div class="navbar">
+            <div class="navbar-header header-logo">
+                    <a href="https://rockwinder.github.io/">Rockwinder`s Blog</a>
+            </div>
+            <div class="navbar-right">
+                <div><a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a></div>
+                <div class="menu-toggle">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                <nav class="mb-md">
+                    
+                    
+                        <a class="menu-item" href="/post/" title="">
+                            <h3>Blog</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/categories/" title="">
+                            <h3>Categories</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/tags/" title="">
+                            <h3>Tags</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/about/" title="">
+                            <h3>About</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                </nav>
+        </div>
+    </div>
+</nav>
+            <main class="main">
+                <div class="container">
+                    
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">如何优雅的关闭Go Channel</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://rockwinder.github.io/" rel="author">Rockwinder</a> with ♥
+                <span class="post-time">
+                on <time datetime=2020-05-20 itemprop="datePublished">May 20, 2020</time>
+                </span>
+                in
+                
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        
+                        
+                        
+                          <a href="https://rockwinder.github.io/categories/golang/"> golang, </a>
+                        
+                        
+                </span>
+                <span class="post-word-count">2169 words</span>
+        </div>
+    </header>
+
+    <div class="post-content">
+        
+
+        
+        
+
+        
+        
+        
+        
+        
+
+        
+        
+        
+
+        <p>Channel关闭原则</p>
+<blockquote>
+<p>不要在消费端关闭channel，不要在有多个并行的生产者时对channel执行关闭操作。</p>
+</blockquote>
+<p>也就是说应该只在[唯一的或者最后唯一剩下]的生产者协程中关闭channel，来通知消费者已经没有值可以继续读了。只要坚持这个原则，就可以确保向一个已经关闭的channel发送数据的情况不可能发生。</p>
+<h3 id="暴力关闭channel的正确方法">暴力关闭channel的正确方法</h3>
+<p>如果想要在消费端关闭channel，或者在多个生产者端关闭channel，可以使用recover机制来上个保险，避免程序因为panic而崩溃。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">SafeClose</span>(<span style="color:#a6e22e">ch</span> <span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">T</span>) (<span style="color:#a6e22e">justClosed</span> <span style="color:#66d9ef">bool</span>) {
+	<span style="color:#66d9ef">defer</span> <span style="color:#66d9ef">func</span>() {
+		<span style="color:#66d9ef">if</span> recover() <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+			<span style="color:#a6e22e">justClosed</span> = <span style="color:#66d9ef">false</span>
+		}
+	}()
+	
+
+	<span style="color:#75715e">// assume ch != nil here.
+</span><span style="color:#75715e"></span>	close(<span style="color:#a6e22e">ch</span>) <span style="color:#75715e">// panic if ch is closed
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span> <span style="color:#75715e">// &lt;=&gt; justClosed = true; return
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>使用这种方法明显违背了上面的channel关闭原则，然后性能还可以，毕竟在每个协程只会调用一次SafeClose，性能损失很小。</p>
+<p>同样也可以在生产消息的时候使用recover方法。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">SafeSend</span>(<span style="color:#a6e22e">ch</span> <span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">T</span>, <span style="color:#a6e22e">value</span> <span style="color:#a6e22e">T</span>) (<span style="color:#a6e22e">closed</span> <span style="color:#66d9ef">bool</span>) {
+	<span style="color:#66d9ef">defer</span> <span style="color:#66d9ef">func</span>() {
+		<span style="color:#66d9ef">if</span> recover() <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+			<span style="color:#75715e">// The return result can be altered 
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">// in a defer function call.
+</span><span style="color:#75715e"></span>			<span style="color:#a6e22e">closed</span> = <span style="color:#66d9ef">true</span>
+		}
+	}()
+	
+	<span style="color:#a6e22e">ch</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">value</span> <span style="color:#75715e">// panic if ch is closed
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span> <span style="color:#75715e">// &lt;=&gt; closed = false; return
+</span><span style="color:#75715e"></span>}
+</code></pre></div><h3 id="礼貌地关闭channel方法">礼貌地关闭channel方法</h3>
+<p>还有不少人经常使用用sync.Once来关闭channel，这样可以确保只会关闭一次</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MyChannel</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">C</span>    <span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">T</span>
+	<span style="color:#a6e22e">once</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Once</span>
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">NewMyChannel</span>() <span style="color:#f92672">*</span><span style="color:#a6e22e">MyChannel</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">MyChannel</span>{<span style="color:#a6e22e">C</span>: make(<span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">T</span>)}
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">mc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">MyChannel</span>) <span style="color:#a6e22e">SafeClose</span>() {
+	<span style="color:#a6e22e">mc</span>.<span style="color:#a6e22e">once</span>.<span style="color:#a6e22e">Do</span>(<span style="color:#66d9ef">func</span>() {
+		close(<span style="color:#a6e22e">mc</span>.<span style="color:#a6e22e">C</span>)
+	})
+}
+</code></pre></div><p>同样我们也可以使用sync.Mutex达到同样的目的。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MyChannel</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">C</span>      <span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">T</span>
+	<span style="color:#a6e22e">closed</span> <span style="color:#66d9ef">bool</span>
+	<span style="color:#a6e22e">mutex</span>  <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Mutex</span>
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">NewMyChannel</span>() <span style="color:#f92672">*</span><span style="color:#a6e22e">MyChannel</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">MyChannel</span>{<span style="color:#a6e22e">C</span>: make(<span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">T</span>)}
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">mc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">MyChannel</span>) <span style="color:#a6e22e">SafeClose</span>() {
+	<span style="color:#a6e22e">mc</span>.<span style="color:#a6e22e">mutex</span>.<span style="color:#a6e22e">Lock</span>()
+	<span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">mc</span>.<span style="color:#a6e22e">closed</span> {
+		close(<span style="color:#a6e22e">mc</span>.<span style="color:#a6e22e">C</span>)
+		<span style="color:#a6e22e">mc</span>.<span style="color:#a6e22e">closed</span> = <span style="color:#66d9ef">true</span>
+	}
+	<span style="color:#a6e22e">mc</span>.<span style="color:#a6e22e">mutex</span>.<span style="color:#a6e22e">Unlock</span>()
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">mc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">MyChannel</span>) <span style="color:#a6e22e">IsClosed</span>() <span style="color:#66d9ef">bool</span> {
+	<span style="color:#a6e22e">mc</span>.<span style="color:#a6e22e">mutex</span>.<span style="color:#a6e22e">Lock</span>()
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">mc</span>.<span style="color:#a6e22e">mutex</span>.<span style="color:#a6e22e">Unlock</span>()
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">mc</span>.<span style="color:#a6e22e">closed</span>
+}
+</code></pre></div><p>要知道golang的设计者不提供SafeClose或者SafeSend方法是有原因的，他们本来就不推荐在消费端或者在并发的多个生产端关闭channel，比如关闭只读channel在语法上就彻底被禁止使用了。</p>
+<h3 id="优雅地关闭channel的方法">优雅地关闭channel的方法</h3>
+<p>上文的SafeSend方法一个很大的劣势在于它不能用在select块的case语句中。而另一个很重要的劣势在于像我这样对代码有洁癖的人来说，使用panic/recover和sync/mutex来搞定不是那么的优雅。下面我们引入在不同的场景下可以使用的纯粹的优雅的解决方法。</p>
+<p>多个消费者，单个生产者。这种情况最简单，直接让生产者关闭channel好了。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+
+<span style="color:#f92672">import</span> (
+	<span style="color:#e6db74">&#34;time&#34;</span>
+	<span style="color:#e6db74">&#34;math/rand&#34;</span>
+	<span style="color:#e6db74">&#34;sync&#34;</span>
+	<span style="color:#e6db74">&#34;log&#34;</span>
+)
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">rand</span>.<span style="color:#a6e22e">Seed</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">UnixNano</span>())
+	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">SetFlags</span>(<span style="color:#ae81ff">0</span>)
+	
+	<span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">MaxRandomNumber</span> = <span style="color:#ae81ff">100000</span>
+	<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">NumReceivers</span> = <span style="color:#ae81ff">100</span>
+	
+	<span style="color:#a6e22e">wgReceivers</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>{}
+	<span style="color:#a6e22e">wgReceivers</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#a6e22e">NumReceivers</span>)
+	
+	<span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">dataCh</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">int</span>, <span style="color:#ae81ff">100</span>)
+	
+	<span style="color:#75715e">// the sender
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+		<span style="color:#66d9ef">for</span> {
+			<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rand</span>.<span style="color:#a6e22e">Intn</span>(<span style="color:#a6e22e">MaxRandomNumber</span>); <span style="color:#a6e22e">value</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> {
+				<span style="color:#75715e">// The only sender can close the channel safely.
+</span><span style="color:#75715e"></span>				close(<span style="color:#a6e22e">dataCh</span>)
+				<span style="color:#66d9ef">return</span>
+			} <span style="color:#66d9ef">else</span> {			
+				<span style="color:#a6e22e">dataCh</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">value</span>
+			}
+		}
+	}()
+	
+	<span style="color:#75715e">// receivers
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#a6e22e">NumReceivers</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+			<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">wgReceivers</span>.<span style="color:#a6e22e">Done</span>()
+			
+			<span style="color:#75715e">// Receive values until dataCh is closed and
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">// the value buffer queue of dataCh is empty.
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">dataCh</span> {
+				<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">value</span>)
+			}
+		}()
+	}
+	
+	<span style="color:#a6e22e">wgReceivers</span>.<span style="color:#a6e22e">Wait</span>()
+}
+</code></pre></div><p>多个生产者，单个消费者。这种情况要比上面的复杂一点。我们不能在消费端关闭channel，因为这违背了channel关闭原则。但是我们可以让消费端关闭一个附加的信号来通知发送端停止生产数据。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+
+<span style="color:#f92672">import</span> (
+	<span style="color:#e6db74">&#34;time&#34;</span>
+	<span style="color:#e6db74">&#34;math/rand&#34;</span>
+	<span style="color:#e6db74">&#34;sync&#34;</span>
+	<span style="color:#e6db74">&#34;log&#34;</span>
+)
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">rand</span>.<span style="color:#a6e22e">Seed</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">UnixNano</span>())
+	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">SetFlags</span>(<span style="color:#ae81ff">0</span>)
+	
+	<span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">MaxRandomNumber</span> = <span style="color:#ae81ff">100000</span>
+	<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">NumSenders</span> = <span style="color:#ae81ff">1000</span>
+	
+	<span style="color:#a6e22e">wgReceivers</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>{}
+	<span style="color:#a6e22e">wgReceivers</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
+	
+	<span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">dataCh</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">int</span>, <span style="color:#ae81ff">100</span>)
+	<span style="color:#a6e22e">stopCh</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">struct</span>{})
+	<span style="color:#75715e">// stopCh is an additional signal channel.
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// Its sender is the receiver of channel dataCh.
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// Its reveivers are the senders of channel dataCh.
+</span><span style="color:#75715e"></span>	
+	<span style="color:#75715e">// senders
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#a6e22e">NumSenders</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+			<span style="color:#66d9ef">for</span> {
+				<span style="color:#75715e">// The first select here is to try to exit the goroutine
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// as early as possible. In fact, it is not essential
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// for this example, so it can be omitted.
+</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">select</span> {
+				<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">stopCh</span>:
+					<span style="color:#66d9ef">return</span>
+				<span style="color:#66d9ef">default</span>:
+				}
+				
+				<span style="color:#75715e">// Even if stopCh is closed, the first branch in the
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// second select may be still not selected for some
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// loops if the send to dataCh is also unblocked.
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// But this is acceptable, so the first select
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// can be omitted.
+</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">select</span> {
+				<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">stopCh</span>:
+					<span style="color:#66d9ef">return</span>
+				<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">dataCh</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">rand</span>.<span style="color:#a6e22e">Intn</span>(<span style="color:#a6e22e">MaxRandomNumber</span>):
+				}
+			}
+		}()
+	}
+	
+	<span style="color:#75715e">// the receiver
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+		<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">wgReceivers</span>.<span style="color:#a6e22e">Done</span>()
+		
+		<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">dataCh</span> {
+			<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">MaxRandomNumber</span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> {
+				<span style="color:#75715e">// The receiver of the dataCh channel is
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// also the sender of the stopCh cahnnel.
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// It is safe to close the stop channel here.
+</span><span style="color:#75715e"></span>				close(<span style="color:#a6e22e">stopCh</span>)
+				<span style="color:#66d9ef">return</span>
+			}
+			
+			<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">value</span>)
+		}
+	}()
+	
+	<span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">wgReceivers</span>.<span style="color:#a6e22e">Wait</span>()
+}
+</code></pre></div><p>就上面这个例子，生产者同时也是退出信号channel的接受者，退出信号channel仍然是由它的生产端关闭的，所以这仍然没有违背channel关闭原则。值得注意的是，这个例子中生产端和接受端都没有关闭消息数据的channel，channel在没有任何goroutine引用的时候会自行关闭，而不需要显示进行关闭。</p>
+<h3 id="多个生产者多个消费者">多个生产者，多个消费者</h3>
+<p>这是最复杂的一种情况，我们既不能让接受端也不能让发送端关闭channel。我们甚至都不能让接受者关闭一个退出信号来通知生产者停止生产。因为我们不能违反channel关闭原则。但是我们可以引入一个额外的协调者来关闭附加的退出信号channel。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+
+<span style="color:#f92672">import</span> (
+	<span style="color:#e6db74">&#34;time&#34;</span>
+	<span style="color:#e6db74">&#34;math/rand&#34;</span>
+	<span style="color:#e6db74">&#34;sync&#34;</span>
+	<span style="color:#e6db74">&#34;log&#34;</span>
+	<span style="color:#e6db74">&#34;strconv&#34;</span>
+)
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">rand</span>.<span style="color:#a6e22e">Seed</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">UnixNano</span>())
+	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">SetFlags</span>(<span style="color:#ae81ff">0</span>)
+	
+	<span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">MaxRandomNumber</span> = <span style="color:#ae81ff">100000</span>
+	<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">NumReceivers</span> = <span style="color:#ae81ff">10</span>
+	<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">NumSenders</span> = <span style="color:#ae81ff">1000</span>
+	
+	<span style="color:#a6e22e">wgReceivers</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>{}
+	<span style="color:#a6e22e">wgReceivers</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#a6e22e">NumReceivers</span>)
+	
+	<span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">dataCh</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">int</span>, <span style="color:#ae81ff">100</span>)
+	<span style="color:#a6e22e">stopCh</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">struct</span>{})
+		<span style="color:#75715e">// stopCh is an additional signal channel.
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">// Its sender is the moderator goroutine shown below.
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">// Its reveivers are all senders and receivers of dataCh.
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">toStop</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">string</span>, <span style="color:#ae81ff">1</span>)
+		<span style="color:#75715e">// The channel toStop is used to notify the moderator
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">// to close the additional signal channel (stopCh).
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">// Its senders are any senders and receivers of dataCh.
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">// Its reveiver is the moderator goroutine shown below.
+</span><span style="color:#75715e"></span>	
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">stoppedBy</span> <span style="color:#66d9ef">string</span>
+	
+	<span style="color:#75715e">// moderator
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+		<span style="color:#a6e22e">stoppedBy</span> = <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">toStop</span>
+		close(<span style="color:#a6e22e">stopCh</span>)
+	}()
+	
+	<span style="color:#75715e">// senders
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#a6e22e">NumSenders</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">id</span> <span style="color:#66d9ef">string</span>) {
+			<span style="color:#66d9ef">for</span> {
+				<span style="color:#a6e22e">value</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">rand</span>.<span style="color:#a6e22e">Intn</span>(<span style="color:#a6e22e">MaxRandomNumber</span>)
+				<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> {
+					<span style="color:#75715e">// Here, a trick is used to notify the moderator
+</span><span style="color:#75715e"></span>					<span style="color:#75715e">// to close the additional signal channel.
+</span><span style="color:#75715e"></span>					<span style="color:#66d9ef">select</span> {
+					<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">toStop</span> <span style="color:#f92672">&lt;-</span> <span style="color:#e6db74">&#34;sender#&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">id</span>:
+					<span style="color:#66d9ef">default</span>:
+					}
+					<span style="color:#66d9ef">return</span>
+				}
+				
+				<span style="color:#75715e">// The first select here is to try to exit the goroutine
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// as early as possible. This select blocks with one
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// receive operation case and one default branches will
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// be optimized as a try-receive operation by the
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// official Go compiler.
+</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">select</span> {
+				<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">stopCh</span>:
+					<span style="color:#66d9ef">return</span>
+				<span style="color:#66d9ef">default</span>:
+				}
+				
+				<span style="color:#75715e">// Even if stopCh is closed, the first branch in the
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// second select may be still not selected for some
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// loops (and for ever in theory) if the send to
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// dataCh is also unblocked.
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// This is why the first select block is needed.
+</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">select</span> {
+				<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">stopCh</span>:
+					<span style="color:#66d9ef">return</span>
+				<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">dataCh</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">value</span>:
+				}
+			}
+		}(<span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">Itoa</span>(<span style="color:#a6e22e">i</span>))
+	}
+	
+	<span style="color:#75715e">// receivers
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#a6e22e">NumReceivers</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">id</span> <span style="color:#66d9ef">string</span>) {
+			<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">wgReceivers</span>.<span style="color:#a6e22e">Done</span>()
+			
+			<span style="color:#66d9ef">for</span> {
+				<span style="color:#75715e">// Same as the sender goroutine, the first select here
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// is to try to exit the goroutine as early as possible.
+</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">select</span> {
+				<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">stopCh</span>:
+					<span style="color:#66d9ef">return</span>
+				<span style="color:#66d9ef">default</span>:
+				}
+				
+				<span style="color:#75715e">// Even if stopCh is closed, the first branch in the
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// second select may be still not selected for some
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// loops (and for ever in theory) if the receive from
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// dataCh is also unblocked.
+</span><span style="color:#75715e"></span>				<span style="color:#75715e">// This is why the first select block is needed.
+</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">select</span> {
+				<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">stopCh</span>:
+					<span style="color:#66d9ef">return</span>
+				<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">dataCh</span>:
+					<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">MaxRandomNumber</span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> {
+						<span style="color:#75715e">// The same trick is used to notify
+</span><span style="color:#75715e"></span>						<span style="color:#75715e">// the moderator to close the
+</span><span style="color:#75715e"></span>						<span style="color:#75715e">// additional signal channel.
+</span><span style="color:#75715e"></span>						<span style="color:#66d9ef">select</span> {
+						<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">toStop</span> <span style="color:#f92672">&lt;-</span> <span style="color:#e6db74">&#34;receiver#&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">id</span>:
+						<span style="color:#66d9ef">default</span>:
+						}
+						<span style="color:#66d9ef">return</span>
+					}
+					
+					<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">value</span>)
+				}
+			}
+		}(<span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">Itoa</span>(<span style="color:#a6e22e">i</span>))
+	}
+	
+	<span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">wgReceivers</span>.<span style="color:#a6e22e">Wait</span>()
+	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;stopped by&#34;</span>, <span style="color:#a6e22e">stoppedBy</span>)
+}
+</code></pre></div><p>以上三种场景不能涵盖全部，但是它们是最常见最通用的三种场景，基本上所有的场景都可以划分为以上三类。</p>
+<h3 id="结论">结论</h3>
+<p>没有任何场景值得你去打破channel关闭原则，如果你遇到这样的一种特殊场景，还是建议你好好思考一下自己设计，是不是该重构一下了</p>
+
+    </div>
+
+    <div class="post-copyright">
+            
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rockwinder </span>
+                </p>
+            
+
+            
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://rockwinder.github.io/post/golang_channel/>https://rockwinder.github.io/post/golang_channel/</span>
+            </p>
+            
+            
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s):
+            
+            <span class="tag"><a href="https://rockwinder.github.io/tags/channel/">
+                    #channel</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> ·
+                <span><a href="https://rockwinder.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://rockwinder.github.io/post/tun2socks/" class="prev" rel="prev" title="tun2socks"><i class="iconfont icon-left"></i>&nbsp;tun2socks</a>
+        
+        
+    </div>
+
+    <div class="post-comment">
+        
+            
+                <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.css">
+<script src="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.min.js"></script>
+<script>
+    const gitalk = new Gitalk({
+
+        clientID: '',
+        clientSecret: '',
+        repo: '',
+        owner: '',
+        admin: [''],
+        id: location.pathname, 
+        distractionFreeMode: false 
+    });
+    (function () {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+            return;
+        }
+        gitalk.render('gitalk-container');
+    })();
+</script>
+
+            
+        
+    </div>
+</article>
+                </div>
+            </main>
+            <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2017 - 2020</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i>
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://rockwinder.github.io/">Rockwinder</a> | </span>
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/Mogeko/Mogege" target="_blank" rel="external nofollow">Mogege</a></span>
+    </div>
+</footer>
+
+
+
+
+
+>
+<script defer src="/js/vendor_main.min.js"></script>
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script> pangu.spacingPage();</script>
+
+
+
+
+
+        </div>
+    </body>
+</html>
