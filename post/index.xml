@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Rockwinder`s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 02 Jun 2020 21:47:31 +0700</lastBuildDate>
+    <lastBuildDate>Wed, 03 Jun 2020 20:33:07 +0700</lastBuildDate>
     
 	<atom:link href="https://rockwinder.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>在macOS上使用GDB的教程</title>
+      <link>https://rockwinder.github.io/post/macos_gdb_install/</link>
+      <pubDate>Wed, 03 Jun 2020 20:33:07 +0700</pubDate>
+      
+      <guid>https://rockwinder.github.io/post/macos_gdb_install/</guid>
+      <description>背景 在macOS上，用于debug的工具有lldb和gdb. 其中lldb作为一种可复用的组件，参与了大型llvm项目库的构成；同时，lldb</description>
+    </item>
     
     <item>
       <title>路由追踪程序Traceroute分析与科普</title>

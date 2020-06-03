@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noodp"/>
+    <meta name="author" content="Rockwinder">
+    <meta name="description" content="Rockwinder 的个人博客">
+    
+    
+    <link rel="prev" href="https://rockwinder.github.io/post/traceroute/" />
+    
+    <link rel="canonical" href="https://rockwinder.github.io/post/macos_gdb_install/" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <title>
+        
+        
+            在macOS上使用GDB的教程 | Rockwinder`s Blog
+        
+    </title>
+    <meta name="title" content="在macOS上使用GDB的教程 | Rockwinder`s Blog">
+    
+<link rel="stylesheet" href="/css/main.min.css">
+
+
+    
+    
+ 
+
+<script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https:\/\/rockwinder.github.io\/"
+    },
+    "articleSection" : "post",
+    "name" : "在macOS上使用GDB的教程",
+    "headline" : "在macOS上使用GDB的教程",
+    "description" : "背景 在macOS上，用于debug的工具有lldb和gdb. 其中lldb作为一种可复用的组件，参与了大型llvm项目库的构成；同时，lldb",
+    "inLanguage" : "zh-cn",
+    "author" : "Rockwinder",
+    "creator" : "Rockwinder",
+    "publisher": "Rockwinder",
+    "accountablePerson" : "Rockwinder",
+    "copyrightHolder" : "Rockwinder",
+    "copyrightYear" : "2020",
+    "datePublished": "2020-06-03 20:33:07 \x2b0700 \x2b07",
+    "dateModified" : "2020-06-03 20:33:07 \x2b0700 \x2b07",
+    "url" : "https:\/\/rockwinder.github.io\/post\/macos_gdb_install\/",
+    "wordCount" : "1278",
+    "keywords" : [ "gdb", "Rockwinder`s Blog"]
+}
+</script>
+
+  </head>
+    <body class="">
+        <div class="wrapper">
+            <nav class="navbar">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+    <div class="container">
+        
+            <div class="navbar-header header-back2home-logo">
+                <span class="logo_mark" >>$</span>
+                <a href="https://rockwinder.github.io/">
+                    <span class="logo_text" >cd /home/</span>
+                    <span class="logo_cursor" ></span>
+                </a>
+            </div>
+        
+        <div class="navbar-right">
+                
+                <span class="menu">
+                
+                <a class="menu-item" href="/post/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+                <span class="divide"></span>
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a>
+                </span>
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+     <div class="container">
+        <div class="navbar">
+            <div class="navbar-header header-logo">
+                    <a href="https://rockwinder.github.io/">Rockwinder`s Blog</a>
+            </div>
+            <div class="navbar-right">
+                <div><a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a></div>
+                <div class="menu-toggle">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                <nav class="mb-md">
+                    
+                    
+                        <a class="menu-item" href="/post/" title="">
+                            <h3>Blog</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/categories/" title="">
+                            <h3>Categories</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/tags/" title="">
+                            <h3>Tags</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/about/" title="">
+                            <h3>About</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                </nav>
+        </div>
+    </div>
+</nav>
+            <main class="main">
+                <div class="container">
+                    
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">在macOS上使用GDB的教程</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://rockwinder.github.io/" rel="author">Rockwinder</a> with ♥
+                <span class="post-time">
+                on <time datetime=2020-06-03 itemprop="datePublished">June 3, 2020</time>
+                </span>
+                in
+                
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        
+                        
+                        
+                          <a href="https://rockwinder.github.io/categories/c/"> c, </a>
+                        
+                        
+                </span>
+                <span class="post-word-count">1278 words</span>
+        </div>
+    </header>
+
+    <div class="post-content">
+        
+
+        
+        
+            
+        
+
+        
+        
+        
+        
+        
+
+        
+        
+        
+
+        <h2 id="背景">背景</h2>
+<p>在macOS上，用于debug的工具有lldb和gdb. 其中lldb作为一种可复用的组件，参与了大型llvm项目库的构成；同时，lldb也是Xcode默认的调试工具, 支持Windows, macOS, iOS, Linux和FreeBSD. 而gdb是GNU项目的调试器，支持Windows和大多数UNIX变种，也包括macOS.</p>
+<p>相比而言，lldb是苹果的&quot;亲儿子&rdquo;，所以当我们调试Objective-C和swift的程序的时候，倾向于使用lldb. 但是，lldb也有其力所不能及之处，那就是多语言支持。lldb仅支持C, C++, Objective-C, 而对swift的支持也是Apple自己编写的swift-lldb(<a href="https://link.zhihu.com/?target=https%3A//github.com/apple/swift-lldb">apple/swift-lldb</a>)才行得通的。因此，当我们使用macOS进行其他语言（如汇编等）的编程时，往往使用gdb来进行调试。</p>
+<p>但是，自从macOS进入10.14以后，对这类调试工具的要求越来越苛刻，现在国内网上找到的许多教程都已经过时，按照教程做依然不能完成。下面，我就从安装开始，一直介绍到能顺利运行gdb.</p>
+<h2 id="安装">安装</h2>
+<p>建议使用homebrew安装，即在终端中键入</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">brew install gdb
+</code></pre></div><p>安装完成后，gdb应该会位于<code>/usr/local/bin/gdb</code></p>
+<p>然后在终端中键入<code>gdb</code>, 就会出现</p>
+<p><img src="https://pic1.zhimg.com/80/v2-32d3152ad8cf0cffff5e7967c9053a70_1440w.jpg" alt="img" loading="lazy" ></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">gdb
+GNU gdb <span style="color:#f92672">(</span>GDB<span style="color:#f92672">)</span> 8.3
+Copyright <span style="color:#f92672">(</span>C<span style="color:#f92672">)</span> <span style="color:#ae81ff">2019</span> Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version <span style="color:#ae81ff">3</span> or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type <span style="color:#e6db74">&#34;show copying&#34;</span> and <span style="color:#e6db74">&#34;show warranty&#34;</span> <span style="color:#66d9ef">for</span> details.
+This GDB was configured as <span style="color:#e6db74">&#34;x86_64-apple-darwin18.5.0&#34;</span>.
+Type <span style="color:#e6db74">&#34;show configuration&#34;</span> <span style="color:#66d9ef">for</span> configuration details.
+For bug reporting instructions, please see:
+&lt;http://www.gnu.org/software/gdb/bugs/&gt;.
+Find the GDB manual and other documentation resources online at:
+    &lt;http://www.gnu.org/software/gdb/documentation/&gt;.
+
+For help, type <span style="color:#e6db74">&#34;help&#34;</span>.
+Type <span style="color:#e6db74">&#34;apropos word&#34;</span> to search <span style="color:#66d9ef">for</span> commands related to <span style="color:#e6db74">&#34;word&#34;</span>.
+<span style="color:#f92672">(</span>gdb<span style="color:#f92672">)</span>
+</code></pre></div><p>键入<code>q</code>并回车即可退出。</p>
+<h2 id="证书签名">证书签名</h2>
+<p>在使用homebrew下载完gdb之后，是不能立刻使用的。比如说我有一个最基础的x86-64汇编程序<code>test.asm</code>：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">SECTION .data
+
+
+EatMsg: db &#34;I&#39;m rockerwinder.&#34;, 0x0a
+EatLen: equ $-EatMsg
+
+SECTION .bss
+
+SECTION .text
+
+global main
+
+main:
+    nop
+    mov rax,0x2000004
+    mov rdi,1
+    mov rsi,EatMsg
+    mov rdx,EatLen
+    syscall
+
+    mov rax,0x2000001
+    mov rdi,0
+    syscall
+</code></pre></div><p>我用nasm汇编，ld链接完成之后的文件<code>test</code>, 运行一下，结果是输出<code>I'm rockerwinder.</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">./test
+I<span style="color:#960050;background-color:#1e0010">&#39;</span>m rockerwinder.
+</code></pre></div><p><img src="https://pic2.zhimg.com/80/v2-e2ab567b5800412b502739533831a90d_1440w.png" alt="img" loading="lazy" ></p>
+<p>但是，如果我使用<code>gdb test</code>对<code>test</code>进行调试，然后在命令行中键入<code>run</code>, 则会报错：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">&gt;run
+
+Starting program: /Users/evian/Downloads/test/test 
+
+Unable to find Mach task port for process-id 358: (os/kern) failure (0x5).
+
+(please check gdb is codesigned - see taskgated(8))
+</code></pre></div><p>这是没有证书的缘故。接下来，我们需要使用证书对gdb进行签名：</p>
+<ol>
+<li>打开应用程序&gt;其他&gt;钥匙串访问</li>
+</ol>
+<p><img src="https://pic4.zhimg.com/80/v2-3363dfea636d71d5e5b465ffedc7923b_1440w.jpg" alt="img" loading="lazy" ></p>
+<ol start="2">
+<li>在菜单栏中选择证书助理&gt;创建证书</li>
+</ol>
+<p><img src="https://pic4.zhimg.com/80/v2-d5361eb51a8d8e1e48b11918196674a3_1440w.jpg" alt="img" loading="lazy" ></p>
+<ol start="3">
+<li>名称随便填(比如说gdb_cert), 身份类型为「自签名根证书」，证书类型为「代码签名」，并勾选「让我覆盖这些默认值」。</li>
+</ol>
+<p><img src="https://pic1.zhimg.com/80/v2-6922c9590278cd62e3fe86623ec28f8c_1440w.jpg" alt="img" loading="lazy" ></p>
+<ol start="4">
+<li>一路继续，直到让我们指定用于该证书的位置，选择「系统」。然后输入密码即可创建。</li>
+</ol>
+<p><img src="https://pic2.zhimg.com/80/v2-bd2ddca1ecee3624fed00220c672ceb5_1440w.jpg" alt="img" loading="lazy" ></p>
+<ol start="5">
+<li>接着，我们可以在「系统」钥匙串的「我的证书」种类中找到这个证书。</li>
+</ol>
+<p><img src="https://pic3.zhimg.com/80/v2-4fe576474c08400ef6f25f32d21e23de_1440w.jpg" alt="img" loading="lazy" ></p>
+<ol start="6">
+<li>双击该证书打开，然后展开「信任」栏目，将「使用此证书时」选择为「始终信任」，关闭时输入密码即可保存。</li>
+</ol>
+<p><img src="https://pic1.zhimg.com/80/v2-e2b3102b2f7e56bc6fd3b5281c64d3b0_1440w.jpg" alt="img" loading="lazy" ></p>
+<ol start="7">
+<li>新建一个叫做<code>gdb-entitlement.xml</code>的文件，其内容为</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+<span style="color:#75715e">&lt;!DOCTYPE plist PUBLIC &#34;-//Apple//DTD PLIST 1.0//EN&#34; &#34;http://www.apple.com/DTDs/PropertyList-1.0.dtd&#34;&gt;</span>
+<span style="color:#f92672">&lt;plist</span> <span style="color:#a6e22e">version=</span><span style="color:#e6db74">&#34;1.0&#34;</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;dict&gt;</span>
+    <span style="color:#f92672">&lt;key&gt;</span>com.apple.security.cs.debugger<span style="color:#f92672">&lt;/key&gt;</span>
+    <span style="color:#f92672">&lt;true/&gt;</span>
+<span style="color:#f92672">&lt;/dict&gt;</span>
+<span style="color:#f92672">&lt;/plist&gt;</span>
+</code></pre></div><ol start="8">
+<li>在终端键入</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">codesign --entitlements gdb-entitlement.xml -fs gdb-cert /usr/loacl/bin/gdb
+</code></pre></div><h2 id="配置gdb">配置gdb</h2>
+<p>在签名过后，我们终于可以使用gdb了，但是，当我们输入<code>run</code>的时候，新的问题出现了：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">&gt;run
+Starting program: /Users/evian/Downloads/test/test
+<span style="color:#f92672">[</span>New Thread 0x1803 of process 1090<span style="color:#f92672">]</span>
+<span style="color:#f92672">[</span>New Thread 0x1903 of process 1090<span style="color:#f92672">]</span>
+</code></pre></div><p>然后整个gdb就卡住了，必须使用control+Z才能退出。</p>
+<p>我们需要在命令行中键入</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">echo <span style="color:#e6db74">&#34;set startup-with-shell off&#34;</span> &gt;&gt; ~/.gdbinit
+</code></pre></div><p>然后就可以正常使用gdb了。</p>
+
+    </div>
+
+    <div class="post-copyright">
+            
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rockwinder </span>
+                </p>
+            
+
+            
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://rockwinder.github.io/post/macos_gdb_install/>https://rockwinder.github.io/post/macos_gdb_install/</span>
+            </p>
+            
+            
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s):
+            
+            <span class="tag"><a href="https://rockwinder.github.io/tags/gdb/">
+                    #gdb</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> ·
+                <span><a href="https://rockwinder.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://rockwinder.github.io/post/traceroute/" class="prev" rel="prev" title="路由追踪程序Traceroute分析与科普"><i class="iconfont icon-left"></i>&nbsp;路由追踪程序Traceroute分析与科普</a>
+        
+        
+    </div>
+
+    <div class="post-comment">
+        
+            
+                <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.css">
+<script src="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.min.js"></script>
+<script>
+    const gitalk = new Gitalk({
+
+        clientID: '',
+        clientSecret: '',
+        repo: '',
+        owner: '',
+        admin: [''],
+        id: location.pathname, 
+        distractionFreeMode: false 
+    });
+    (function () {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+            return;
+        }
+        gitalk.render('gitalk-container');
+    })();
+</script>
+
+            
+        
+    </div>
+</article>
+                </div>
+            </main>
+            <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2017 - 2020</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i>
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://rockwinder.github.io/">Rockwinder</a> | </span>
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/Mogeko/Mogege" target="_blank" rel="external nofollow">Mogege</a></span>
+    </div>
+</footer>
+
+
+
+
+
+>
+<script defer src="/js/vendor_main.min.js"></script>
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script> pangu.spacingPage();</script>
+
+
+
+
+
+        </div>
+    </body>
+</html>

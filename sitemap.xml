@@ -2,9 +2,9 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
     <url>
-      <loc>https://rockwinder.github.io/categories/</loc>
+      <loc>https://rockwinder.github.io/categories/c/</loc>
       
-      <lastmod>2020-06-02T21:47:31+07:00</lastmod>
+      <lastmod>2020-06-03T20:33:07+07:00</lastmod>
       
       
       
@@ -12,9 +12,19 @@
     </url>
   
     <url>
-      <loc>https://rockwinder.github.io/categories/linux/</loc>
+      <loc>https://rockwinder.github.io/categories/</loc>
       
-      <lastmod>2020-06-02T21:47:31+07:00</lastmod>
+      <lastmod>2020-06-03T20:33:07+07:00</lastmod>
+      
+      
+      
+      
+    </url>
+  
+    <url>
+      <loc>https://rockwinder.github.io/tags/gdb/</loc>
+      
+      <lastmod>2020-06-03T20:33:07+07:00</lastmod>
       
       
       
@@ -24,7 +34,7 @@
     <url>
       <loc>https://rockwinder.github.io/post/</loc>
       
-      <lastmod>2020-06-02T21:47:31+07:00</lastmod>
+      <lastmod>2020-06-03T20:33:07+07:00</lastmod>
       
       
       
@@ -33,6 +43,26 @@
   
     <url>
       <loc>https://rockwinder.github.io/tags/</loc>
+      
+      <lastmod>2020-06-03T20:33:07+07:00</lastmod>
+      
+      
+      
+      
+    </url>
+  
+    <url>
+      <loc>https://rockwinder.github.io/post/macos_gdb_install/</loc>
+      
+      <lastmod>2020-06-03T20:33:07+07:00</lastmod>
+      
+      
+      
+      
+    </url>
+  
+    <url>
+      <loc>https://rockwinder.github.io/categories/linux/</loc>
       
       <lastmod>2020-06-02T21:47:31+07:00</lastmod>
       
