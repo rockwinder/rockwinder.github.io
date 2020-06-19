@@ -20,5 +20,14 @@
       <description>一、路由追踪程序traceroute/tracert Traceroute是Linux和Mac OS等系统默认提供的路由追踪小程序，Tracer</description>
     </item>
     
+    <item>
+      <title>聊聊Linux 五种IO模型</title>
+      <link>https://rockwinder.github.io/post/linux_io_multiplexing/</link>
+      <pubDate>Wed, 19 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://rockwinder.github.io/post/linux_io_multiplexing/</guid>
+      <description>那么，在正式开始讲Linux IO模型前，比如：同步IO和异步IO，阻塞IO和非阻塞IO分别是什么，到底有什么区别？不同的人在不同的上下文下给</description>
+    </item>
+    
   </channel>
 </rss>
