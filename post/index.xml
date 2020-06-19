@@ -57,6 +57,24 @@
     </item>
     
     <item>
+      <title>理解c/c&#43;&#43;函数指针</title>
+      <link>https://rockwinder.github.io/post/c_function_pointer/</link>
+      <pubDate>Wed, 19 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://rockwinder.github.io/post/c_function_pointer/</guid>
+      <description>函数的类型与地址 我们来看下面这个典型的函数： int foo() { return 5; } 显然foo 是函数名，而int是函数返回值的类型。但是，函数有类型吗？有，函数有自己的</description>
+    </item>
+    
+    <item>
+      <title>理解c/c&#43;&#43;多级指针</title>
+      <link>https://rockwinder.github.io/post/c_multilevel_pointer/</link>
+      <pubDate>Wed, 19 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://rockwinder.github.io/post/c_multilevel_pointer/</guid>
+      <description>一、多级指针原理 指针的本质就是一个普通变量，它的值表示的是一个内存地址，这个地址中可能存放了其它变量。那么二级指针其实也是一个普通的变量，这</description>
+    </item>
+    
+    <item>
       <title>聊聊Linux 五种IO模型</title>
       <link>https://rockwinder.github.io/post/linux_io_multiplexing/</link>
       <pubDate>Wed, 19 Jun 2019 00:00:00 +0000</pubDate>
