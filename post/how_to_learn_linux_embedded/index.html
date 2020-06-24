@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noodp"/>
+    <meta name="author" content="Rockwinder">
+    <meta name="description" content="Rockwinder 的个人博客">
+    
+    
+    <link rel="prev" href="https://rockwinder.github.io/post/mysql_underlying_architecture/" />
+    
+    <link rel="canonical" href="https://rockwinder.github.io/post/how_to_learn_linux_embedded/" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <title>
+        
+        
+            如何学习嵌入式linux | Rockwinder`s Blog
+        
+    </title>
+    <meta name="title" content="如何学习嵌入式linux | Rockwinder`s Blog">
+    
+<link rel="stylesheet" href="/css/main.min.css">
+
+
+    
+    
+ 
+
+<script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https:\/\/rockwinder.github.io\/"
+    },
+    "articleSection" : "post",
+    "name" : "如何学习嵌入式linux",
+    "headline" : "如何学习嵌入式linux",
+    "description" : "第1章 单片机和Linux的区别 1.1 有哪些产品使用单片机或Linux 所有的电子产品，所用技术都可以认为要么是单片机，要么是Linux；GUI方面",
+    "inLanguage" : "zh-cn",
+    "author" : "Rockwinder",
+    "creator" : "Rockwinder",
+    "publisher": "Rockwinder",
+    "accountablePerson" : "Rockwinder",
+    "copyrightHolder" : "Rockwinder",
+    "copyrightYear" : "2020",
+    "datePublished": "2020-06-24 15:39:01 \x2b0700 \x2b07",
+    "dateModified" : "2020-06-24 15:39:01 \x2b0700 \x2b07",
+    "url" : "https:\/\/rockwinder.github.io\/post\/how_to_learn_linux_embedded\/",
+    "wordCount" : "5020",
+    "keywords" : [ "embedded", "Rockwinder`s Blog"]
+}
+</script>
+
+  </head>
+    <body class="">
+        <div class="wrapper">
+            <nav class="navbar">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+    <div class="container">
+        
+            <div class="navbar-header header-back2home-logo">
+                <span class="logo_mark" >>$</span>
+                <a href="https://rockwinder.github.io/">
+                    <span class="logo_text" >cd /home/</span>
+                    <span class="logo_cursor" ></span>
+                </a>
+            </div>
+        
+        <div class="navbar-right">
+                
+                <span class="menu">
+                
+                <a class="menu-item" href="/post/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+                <span class="divide"></span>
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a>
+                </span>
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+     <div class="container">
+        <div class="navbar">
+            <div class="navbar-header header-logo">
+                    <a href="https://rockwinder.github.io/">Rockwinder`s Blog</a>
+            </div>
+            <div class="navbar-right">
+                <div><a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a></div>
+                <div class="menu-toggle">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                <nav class="mb-md">
+                    
+                    
+                        <a class="menu-item" href="/post/" title="">
+                            <h3>Blog</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/categories/" title="">
+                            <h3>Categories</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/tags/" title="">
+                            <h3>Tags</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/about/" title="">
+                            <h3>About</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                </nav>
+        </div>
+    </div>
+</nav>
+            <main class="main">
+                <div class="container">
+                    
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">如何学习嵌入式linux</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://rockwinder.github.io/" rel="author">Rockwinder</a> with ♥
+                <span class="post-time">
+                on <time datetime=2020-06-24 itemprop="datePublished">June 24, 2020</time>
+                </span>
+                in
+                
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        
+                        
+                        
+                          <a href="https://rockwinder.github.io/categories/linux/"> linux, </a>
+                        
+                        
+                </span>
+                <span class="post-word-count">5020 words</span>
+        </div>
+    </header>
+
+    <div class="post-content">
+        
+
+        
+        
+            
+        
+
+        
+        
+        
+        
+        
+
+        
+        
+        
+
+        <h2 id="第1章-单片机和linux的区别">第1章 单片机和Linux的区别</h2>
+<h3 id="11-有哪些产品使用单片机或linux">1.1 有哪些产品使用单片机或Linux</h3>
+<p>所有的电子产品，所用技术都可以认为要么是单片机，要么是Linux；GUI方面主要是QT/Android，它们都是运行于Linux之上的。</p>
+<p><img src="https://i0.hdslb.com/bfs/article/03fa7754826baf218786089a7d031958067d2228.jpg@1320w_740h.webp" alt="img" loading="lazy" ></p>
+<p>也许你不服！不是还有ucos、vxwork、wince、IOS吗？下面这个图是关于操作系统的占比，是2016年的，我没找到更新的图，但是很有参考意义：</p>
+<p>我们说的单片机不使用操作系统，在上图中没有体现出来。但是使用单片机设备肯定远远超过Linux。很多人也是先学习单片机，从单片机进入电子工程师行业</p>
+<p>日常生活中，有哪些产品使用单片机、Linux呢？下面举一些例子：</p>
+<p><img src="https://i0.hdslb.com/bfs/article/911592ee38577e0fecea7eb960d489e91f40c509.jpg@1320w_742h.webp" alt="img" loading="lazy" ></p>
+<p><img src="https://i0.hdslb.com/bfs/article/b6fde96728edd2f4724a19bc4bc57bebc5f43852.jpg@1320w_742h.webp" alt="img" loading="lazy" ></p>
+<p><img src="https://i0.hdslb.com/bfs/article/01fc2fbde4162d285b3c3cbc25d82a3e61cdb155.jpg@1320w_742h.webp" alt="img" loading="lazy" ></p>
+<p>我们设计一个产品时，是使用单片机还是Linux，取决于成本：硬件成本、软件成本、维护成本、升级成本。而不应该根据个人偏好来选择：我喜欢单片机，所以就排斥使用Linux；我喜欢Linux，就排斥使用单片机。为了有更多的选择，我们需要既懂单片机，又懂Linux。</p>
+<h3 id="12-在硬件操作上单片机和linux是类似的">1.2 在硬件操作上单片机和Linux是类似的</h3>
+<p>以点灯为例，
+无论是单片机还是Linux，我们要做的事情都一样：</p>
+<p>① 看原理图，确定引脚是哪一个，确定它输出什么电平才可以</p>
+<p>② 看芯片手册，确定要怎么操作寄存器</p>
+<p>③ 写程序</p>
+<p>但是，怎么编写程序，单片机和Linux有很大不同。</p>
+<h3 id="13-在单片机中点灯使用lcd">1.3 在单片机中点灯、使用LCD</h3>
+<p>使用单片机开发程序时，我们一上来就写一个main函数，下面是一些简化的代码：</p>
+<p><img src="https://i0.hdslb.com/bfs/article/a3ca9750a91e4a0b1c1047da35c0c8bc66a55b71.jpg@1320w_524h.webp" alt="img" loading="lazy" ></p>
+<p>LED程序里面的init_led、led_on、led_off函数是你一个人写的，爱取什么名就取什么名，爱怎么写就怎么写。</p>
+<p>LCD程序里的函数也是你写的，完全是自由发挥。</p>
+<p>很多单片机项目不是很复杂，2、3个人从上到下统统搞定，里面的函数大多时间是直接去读写寄存器。</p>
+<p>很多单片机项目严重依赖于硬件，换一个芯片后怎么办？重写一套代码呗。</p>
+<p>在单片机程序里，没有应用程序、驱动程序的概念，很可能一个人包揽了硬件设计、模块调试(或称之为驱动)、功能开发(或称之为应用)的全部活。</p>
+<h3 id="14-在linux中点灯使用lcd">1.4 在Linux中点灯、使用LCD</h3>
+<p>在Linux中，不允许应用开发人员直接去操作硬件，比如你想点个灯，不好意思，你无法直接访问寄存器；你需要通过驱动程序来访问寄存器。</p>
+<p>为什么？有几大原因：</p>
+<p>① Linux系统中运行着众多程序，必须保证质量差的程序无法破坏系统：</p>
+<p>假设你写的程序比较烂，那我不能让你去随便访问寄存器，把系统搞崩溃了怎么办？你本意是去点灯，但是你看错了寄存器，你把电源关了怎么办？</p>
+<p>所以这些操作硬件的活，还是交给信得过的人来做吧：交给驱动工程师，他既懂硬件又懂软件。</p>
+<p>② 保证程序的可移植性：</p>
+<p>编写应用程序时，大家都使用统一的函数，以后换一个芯片时，应用程序不用变；只需要根据这个接口提供驱动程序就可以了。</p>
+<p>③ 团队协作：</p>
+<p>。使用Linux系统的项目一般比较大，术业有专攻，一个人不太可能从上到下都全部掌握。比如做人脸识别项目，有擅长做图像处理的，他可不管你要用多少种摄像头，有图像给他就可以。而多种摄像头的硬件操作方法各有不同，这些交给驱动程序工程师。</p>
+<p>所以，在Linux中应用程序和驱动程序是分开的。</p>
+<p>以LED、LCD程序为例，简化的代码如下：</p>
+<p><img src="https://i0.hdslb.com/bfs/article/a3ca9750a91e4a0b1c1047da35c0c8bc66a55b71.jpg@1320w_524h.webp" alt="img" loading="lazy" ></p>
+<p>也许你已经大概猜出来了，应用程序怎么调用驱动程序？通过标准的接口：</p>
+<p>①open：</p>
+<p>打开驱动程序。</p>
+<p>② read/write：</p>
+<p>读、写数据。</p>
+<p>③ ioctl：</p>
+<p>传入各种参数，获得各种参数。</p>
+<p>④ mmap：</p>
+<p>内存映射，比如映射之后，应用程序可以直接读写LCD的显存。</p>
+<p>你看！从这些接口里，我们根本看不到寄存器的操作。底层的程序驱动会根据这些调用，去设置寄存器、操作硬件。</p>
+<p>所以，我高大上的应用工程师，干嘛苦哈哈地去看原理图、看在片手册、读写寄存器，搞不好还要去调试硬件BUG。这些脏活、累活就交给驱动工程师吧。客户的需求千变万化，我996时间都不够用了。</p>
+<p>切，我上懂软件、下懂硬件的驱动工程师，肯定不能把这么重要的活交给你去做了，把我的系统搞崩溃了怎么办。</p>
+<p>开玩笑、开玩笑、开玩笑的，有应用工程师、驱动工程师的优劣之分，大家都是为了做出产品。现在有一个趋势，一个任务从上到下你都需要懂，这就是所谓的全栈工程师。</p>
+<p>还是以LED为例，应用程序和驱动程序的协作如下图所示：</p>
+<p>在Linux中，“一切皆文件”，要访问某个硬件，也是要打开文件、读写文件。应用程序要根据标准的文件接口：open/read/write/ioctl/mmap等来访问驱动程序。</p>
+<p>既然如此，怎么写驱动程序呢？最简单的方法就是：APP要调用open来打开驱动程序，那驱动‘程序里就提供一个xxx_open函数来初始化硬件；APP要调用write来写数据，驱动程序里就提供一个xxx_write函数来接收数据并操作硬件。</p>
+<p>用xxx_open、xxx_write来构成一个驱动程序，这就是驱动框架。</p>
+<p>怎么实现这些xxx_open、xxx_write函数？我们要做的事情跟单片机是类似的，一样要去看电路图、看芯片手册，然后在这些函数里读写寄存器：这称为硬件操作。</p>
+<p>所以，Linux驱动程序= 驱动框架 + 硬件操作。</p>
+<p>有单片机基础的人，对硬件操作比较熟悉了，把重点放在驱动框架上就可以。</p>
+<p>高能预警：驱动框架可不简单，对于LED来说是简单，但是还有更复杂的驱动程序，它要考虑“通用”，这很要命。</p>
+<h2 id="第2章-嵌入式linux快速入门">第2章 嵌入式Linux快速入门</h2>
+<p>这几天在群里跟学员聊天，有一位学员的学习方法很好：先观其广，再究其深。有时候要“不求甚解”，很多时候保持疑问先学下去，这些疑问就自然解决了。</p>
+<p>比如课程中涉及汇编知识，如果你要彻底弄清楚，你需要去学习《ARM架构与编程》；当你学完这本书，你的同学搞不好已经可以上手工作了。</p>
+<h3 id="21-短期的目标是什么">2.1 短期的目标是什么</h3>
+<p>我们先把学习目标定下来：快速了解嵌入式Linux开发的流程，知道要学什么，具备跟从业者交流的能力。</p>
+<h3 id="22-一个嵌入式linux系统的组成">2.2 一个嵌入式Linux系统的组成</h3>
+<p><img src="https://i0.hdslb.com/bfs/article/caee9b22d0c5295ce42a9b9e6de2f0a7e61e0443.jpg@1320w_826h.webp" alt="img" loading="lazy" ></p>
+<p>下面我们用类比和逻辑推导出嵌入式Linux系统的组成，没错，“推导”。</p>
+<p>从上图可以知道：</p>
+<p>① 组成：</p>
+<p>嵌入式Linux系统</p>
+<p>= bootloader + linux内核 + 根文件系统(里面含有APP)。</p>
+<p>② bootloader：</p>
+<p>它的目的是启动内核，去哪等读内核？读到哪里？去Flash等外设读内核，存到内存里去。所以需要有Flash里外设的驱动能力，为了调试方便还会有网络功能。</p>
+<p>所以，可以认为 booloader = 裸机集合，它就是一个复杂的单片机程序。</p>
+<p>③ Linux内核</p>
+<p>Linux内核的最主要目的是去启动APP，APP保存在哪里？保存在“根文件系统”里。“根文件系统”又保存在哪里？在Flash、SD卡等设备里，甚至可能在网络上。所以Linux内核要有这些Flash、SD卡里设备的驱动能力。</p>
+<p>不仅如此，Linux内核还有进程调度能力、内存管理等功能。</p>
+<p>所以：Linux内核 = 驱动集合 + 进程调度 + 内存管理等。</p>
+<h3 id="23-要学习bootloader吗">2.3 要学习bootloader吗</h3>
+<p>Bootloader有很多种，常用的叫作u-boot。</p>
+<p>在实际工作中，对于u-boot基本上是修修改改，甚至不改。但是u-boot本身是很复杂的，比如为了便于调试，它支持网络功能；有些内核是保存在FAT32分区里，于是它要能解析FAT32分区，读FAT32分区的文件。</p>
+<p>花那么多精力去学习u-boot，但是工作中基本用不到，这对初学者很不友善。</p>
+<p>所以，对于初学者，我建议：理解u-boot的作用、会使用u-boot的命令，这就可以了。</p>
+<p>如果你的工作就是修改、完善bootloader，那么再去研究它吧。</p>
+<h3 id="24-要学习linux内核要学习驱动程序吗">2.4 要学习Linux内核、要学习驱动程序吗</h3>
+<p>之前我们说过Linux内核 = 驱动集合 + 进程调度 + 内存管理等，如果要学习Linux内核，从驱动程序入手是一个好办法。</p>
+<p>但是人人都要学习Linux内核、人人都要学习Linux驱动吗？显然不是。</p>
+<p>作为初学者，懂几个简单的驱动程序，有利于工作交流；理解中断、进程、线程的概念，无论是对驱动开发、应用程序开发，都是很有好处的。</p>
+<p>所以对于初学者，建议前期只学习这几个驱动：LED、按键、中断。</p>
+<p>① LED驱动程序：</p>
+<p>这是最简单的驱动程序。</p>
+<p>② 按键驱动程序：</p>
+<p>它也比较简单，从它引入“中断”。</p>
+<p>③ 中断：</p>
+<p>从“中断”它可以引入：休眠-唤醒、进程/线程、POLL机制、异步通知等概念。这些概念无论是对驱动开发，还是对应用开发，都很重要。</p>
+<p>所以，对于初学者，我建议必须学习这几个驱动：LED、按键、中断。</p>
+<p>入门之后，如果你想从事内核开发、驱动开发，那么可以去钻研几个驱动程序(输入系统、I2C总线、SPI总线等)，掌握若干个大型驱动程序后，你对内核的套路就有所了解了，再去研究其他部分(比如进程管理、文件系统)时你会发现套路是如此通用。</p>
+<p>摄像头(VL42)、声卡ALSA驱动是Linux中比较复杂的2类驱动，它们是很难的，如果工作与此相关再去研究。</p>
+<h3 id="25要学习linux应用程序吗先学一些基础技能">2.5，要学习Linux应用程序吗？先学一些基础技能</h3>
+<p>要学，即使以后你只想研究内核，一些基本的应用开发编写能力也是需要的：</p>
+<p>① 基本设备的访问，比如LCD、输入设备</p>
+<p>② 进程、线程、进程通信、线程同步与互斥</p>
+<p>③ 休眠-唤醒、POLL机制、信号</p>
+<p>④ 网络编程</p>
+<p>①②③部分的知识，跟驱动有密切的关系，它们是相辅相承的。</p>
+<p>掌握了基本驱动开发能力、基本应用开发能力之后，在工作中你就可以跟别人友好沟通了，不至于一脸懵逼。</p>
+<h3 id="26应用程序是怎么启动的要了解一下根文件系统">2.6，应用程序是怎么启动的？要了解一下根文件系统</h3>
+<p>你辛辛苦苦写出了应用程序，怎么把它放到板子上，让它开机就自动启动？</p>
+<p>你写的程序，它依赖于哪些库，这些库放到板子上哪个目录？</p>
+<p>怎么做一个可升级的系统？即使升级中途断电了，也要保证程序至少还可以运行老的版本？</p>
+<p>这些都需要我们了解一下根文件系统。</p>
+<p>先了解一下init进程：它要读取配置文件，根据配置文件启动各个APP。</p>
+<p>了解了init进程，你就了解了根文件系统的组成，就可以随心所欲裁剪系统，为你的项目制作出最精简的系统。</p>
+<h2 id="第3章-学习方法">第3章 学习方法</h2>
+<h3 id="31先不要打破砂锅问到底">3.1，先不要打破砂锅问到底</h3>
+<p>嵌入式涉及的东西太多太杂了，如果心里没有主线，碰到什么都要去研究个透彻，最终反而忘记自己要学什么了。</p>
+<p>嵌入式涉及硬件知识、软件知识，软件里涉及汇编、ARM架构、C语言、Makefile、Shell；又分为bootloader、内核、驱动、基本的APP、GUI。</p>
+<p>比如我们会用到Makefile，了解它的基本规则，会用我们提供的Makefile就可以。</p>
+<p>不需要深入研究那些make函数，因为在工作中都有现成的Makefile给你使用，不需要自己去编写一套Makefile。何必花上好几天去深入研究它呢？</p>
+<p>比如我们会用到bootloader，难道又要花上几个月来深入研究u-boot吗？工作中基本不需要改u-boot，会用那几个命令就可以。</p>
+<p>甚至有些学员先去买本shell的书来学习shell命令，何必？我们在视频中用到什么命令，你不懂时再去百度一下这些命令就可以了。</p>
+<p>不要脱离初学者的主线：应用基础、驱动基础。有了这2个基础后，你想深入研究某部分时，再去花时间吧。</p>
+<h3 id="32思路要清晰不怕抄代码">3.2，思路要清晰，不怕抄代码</h3>
+<p>视频里的代码，请你一定要自己去写一次、写多次。为什么我现在写驱动那么熟？我2009年在华清远见上课时，</p>
+<p>每次上课我都要给学生写一次那些驱动，十几次下来闭着眼睛都知道内核的套路了。</p>
+<p>记不住那些函数？我也记不住，我都是去参考同类的驱动程序，这又不是闭卷考试。</p>
+<p>但是要理清楚思路，你写这个程序要完成什么功能、怎么实现这些功能？这个要弄清楚。</p>
+<p>有了思路后再写代码，不知道怎么写？没关系，看看视频，看看示例，然后关闭视频看看能否自己写出来。</p>
+<h3 id="33对自己的方向很了解我只能带你到这里了">3.3，对自己的方向很了解，我只能带你到这里了</h3>
+<p>我的专长是操作系统，是快速地带领大家掌握一些项目开发的基础知识。</p>
+<p>如果你决定深入研究某方面时，我并不能带你多久。你要去看源码，去看这方面的专业书籍。</p>
+<p>比如想深入钻研内核的内存管理时，它有页表映射(你需要阅读ARM架构的手册)、SLAB分配器、vmalloc/malloc实现、mmap实现、缺页中断、父进程子进程之间的页面管理等等，内容非常多。有时候连书籍都没有，你需要直接啃代码。</p>
+<p>当你想从事某个行业时，就需要深入研究行业相关的知识。</p>
+<p>比如CAN总线，它可以写成一本书：CAN协议、CAN报文、Socket CAN、车身网络拓扑结构，CAN应用报文，CAN网络管理报文，CAN诊断报文。</p>
+<p>想做物联网网关，需要深入研究MQTT，MQTT协议相对简单，但是MQTT英文原版协议有130多页，中文版有近100页，是一本小书了。</p>
+<p>每个行业都有自己的业务逻辑，在掌握基本的编程能力之一，你需要结合具体的业务去深入学习。</p>
+
+    </div>
+
+    <div class="post-copyright">
+            
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rockwinder </span>
+                </p>
+            
+
+            
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://rockwinder.github.io/post/how_to_learn_linux_embedded/>https://rockwinder.github.io/post/how_to_learn_linux_embedded/</span>
+            </p>
+            
+            
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s):
+            
+            <span class="tag"><a href="https://rockwinder.github.io/tags/embedded/">
+                    #embedded</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> ·
+                <span><a href="https://rockwinder.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://rockwinder.github.io/post/mysql_underlying_architecture/" class="prev" rel="prev" title="洞悉MySQL底层架构：游走在缓冲与磁盘之间"><i class="iconfont icon-left"></i>&nbsp;洞悉MySQL底层架构：游走在缓冲与磁盘之间</a>
+        
+        
+    </div>
+
+    <div class="post-comment">
+        
+            
+                <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.css">
+<script src="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.min.js"></script>
+<script>
+    const gitalk = new Gitalk({
+
+        clientID: '',
+        clientSecret: '',
+        repo: '',
+        owner: '',
+        admin: [''],
+        id: location.pathname, 
+        distractionFreeMode: false 
+    });
+    (function () {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+            return;
+        }
+        gitalk.render('gitalk-container');
+    })();
+</script>
+
+            
+        
+    </div>
+</article>
+                </div>
+            </main>
+            <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2017 - 2020</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i>
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://rockwinder.github.io/">Rockwinder</a> | </span>
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/Mogeko/Mogege" target="_blank" rel="external nofollow">Mogege</a></span>
+    </div>
+</footer>
+
+
+
+
+
+>
+<script defer src="/js/vendor_main.min.js"></script>
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script> pangu.spacingPage();</script>
+
+
+
+
+
+        </div>
+    </body>
+</html>

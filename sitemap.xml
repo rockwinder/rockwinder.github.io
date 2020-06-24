@@ -4,7 +4,7 @@
     <url>
       <loc>https://rockwinder.github.io/categories/</loc>
       
-      <lastmod>2020-06-05T14:59:13+07:00</lastmod>
+      <lastmod>2020-06-24T15:39:01+07:00</lastmod>
       
       
       
@@ -12,9 +12,19 @@
     </url>
   
     <url>
-      <loc>https://rockwinder.github.io/categories/mysql/</loc>
+      <loc>https://rockwinder.github.io/tags/embedded/</loc>
       
-      <lastmod>2020-06-05T14:59:13+07:00</lastmod>
+      <lastmod>2020-06-24T15:39:01+07:00</lastmod>
+      
+      
+      
+      
+    </url>
+  
+    <url>
+      <loc>https://rockwinder.github.io/categories/linux/</loc>
+      
+      <lastmod>2020-06-24T15:39:01+07:00</lastmod>
       
       
       
@@ -23,6 +33,36 @@
   
     <url>
       <loc>https://rockwinder.github.io/post/</loc>
+      
+      <lastmod>2020-06-24T15:39:01+07:00</lastmod>
+      
+      
+      
+      
+    </url>
+  
+    <url>
+      <loc>https://rockwinder.github.io/tags/</loc>
+      
+      <lastmod>2020-06-24T15:39:01+07:00</lastmod>
+      
+      
+      
+      
+    </url>
+  
+    <url>
+      <loc>https://rockwinder.github.io/post/how_to_learn_linux_embedded/</loc>
+      
+      <lastmod>2020-06-24T15:39:01+07:00</lastmod>
+      
+      
+      
+      
+    </url>
+  
+    <url>
+      <loc>https://rockwinder.github.io/categories/mysql/</loc>
       
       <lastmod>2020-06-05T14:59:13+07:00</lastmod>
       
@@ -62,29 +102,9 @@
     </url>
   
     <url>
-      <loc>https://rockwinder.github.io/tags/</loc>
-      
-      <lastmod>2020-06-03T20:33:07+07:00</lastmod>
-      
-      
-      
-      
-    </url>
-  
-    <url>
       <loc>https://rockwinder.github.io/post/macos_gdb_install/</loc>
       
       <lastmod>2020-06-03T20:33:07+07:00</lastmod>
-      
-      
-      
-      
-    </url>
-  
-    <url>
-      <loc>https://rockwinder.github.io/categories/linux/</loc>
-      
-      <lastmod>2020-06-02T21:47:31+07:00</lastmod>
       
       
       

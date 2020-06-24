@@ -6,10 +6,19 @@
     <description>Recent content in Tags on Rockwinder`s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 03 Jun 2020 20:33:07 +0700</lastBuildDate>
+    <lastBuildDate>Wed, 24 Jun 2020 15:39:01 +0700</lastBuildDate>
     
 	<atom:link href="https://rockwinder.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>embedded</title>
+      <link>https://rockwinder.github.io/tags/embedded/</link>
+      <pubDate>Wed, 24 Jun 2020 15:39:01 +0700</pubDate>
+      
+      <guid>https://rockwinder.github.io/tags/embedded/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>gdb</title>

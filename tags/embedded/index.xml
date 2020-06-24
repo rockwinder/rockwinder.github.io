@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>embedded on Rockwinder`s Blog</title>
+    <link>https://rockwinder.github.io/tags/embedded/</link>
+    <description>Recent content in embedded on Rockwinder`s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 24 Jun 2020 15:39:01 +0700</lastBuildDate>
+    
+	<atom:link href="https://rockwinder.github.io/tags/embedded/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>如何学习嵌入式linux</title>
+      <link>https://rockwinder.github.io/post/how_to_learn_linux_embedded/</link>
+      <pubDate>Wed, 24 Jun 2020 15:39:01 +0700</pubDate>
+      
+      <guid>https://rockwinder.github.io/post/how_to_learn_linux_embedded/</guid>
+      <description>第1章 单片机和Linux的区别 1.1 有哪些产品使用单片机或Linux 所有的电子产品，所用技术都可以认为要么是单片机，要么是Linux；GUI方面</description>
+    </item>
+    
+  </channel>
+</rss>
