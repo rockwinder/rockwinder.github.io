@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Rockwinder`s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 24 Jun 2020 15:39:01 +0700</lastBuildDate>
+    <lastBuildDate>Thu, 25 Jun 2020 20:59:32 +0700</lastBuildDate>
     
 	<atom:link href="https://rockwinder.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>TCP IP拥塞控制总结</title>
+      <link>https://rockwinder.github.io/post/tcpip_flow_control/</link>
+      <pubDate>Thu, 25 Jun 2020 20:59:32 +0700</pubDate>
+      
+      <guid>https://rockwinder.github.io/post/tcpip_flow_control/</guid>
+      <description>一.先唠唠嗑 按照计划，今天该出分布式一致性系列的第四篇-Paxos算法，但是又鸽了。 Paxos这个算法要很好地表达写出来并不容易，所以到现在</description>
+    </item>
     
     <item>
       <title>如何学习嵌入式linux</title>
