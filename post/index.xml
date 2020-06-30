@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Rockwinder`s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 25 Jun 2020 20:59:32 +0700</lastBuildDate>
+    <lastBuildDate>Tue, 30 Jun 2020 15:48:40 +0700</lastBuildDate>
     
 	<atom:link href="https://rockwinder.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Android 热修复原理实战</title>
+      <link>https://rockwinder.github.io/post/android_hot_fix/</link>
+      <pubDate>Tue, 30 Jun 2020 15:48:40 +0700</pubDate>
+      
+      <guid>https://rockwinder.github.io/post/android_hot_fix/</guid>
+      <description>代码修复 首先我们定义一个简单的类 public class Text { public static String message(){ return &amp;#34;明天不放假&amp;#34;; } } 然后再Activity中调用 public void onClick(View v) { switch (v.getId()) { case R.id.code: Toast.makeText(MainActivity.this, Text.message(), Toast.LENGTH_LONG).show();</description>
+    </item>
     
     <item>
       <title>TCP IP拥塞控制总结</title>

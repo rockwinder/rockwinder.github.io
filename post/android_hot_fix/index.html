@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noodp"/>
+    <meta name="author" content="Rockwinder">
+    <meta name="description" content="Rockwinder 的个人博客">
+    
+    
+    <link rel="prev" href="https://rockwinder.github.io/post/tcpip_flow_control/" />
+    
+    <link rel="canonical" href="https://rockwinder.github.io/post/android_hot_fix/" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <title>
+        
+        
+            Android 热修复原理实战 | Rockwinder`s Blog
+        
+    </title>
+    <meta name="title" content="Android 热修复原理实战 | Rockwinder`s Blog">
+    
+<link rel="stylesheet" href="/css/main.min.css">
+
+
+    
+    
+ 
+
+<script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https:\/\/rockwinder.github.io\/"
+    },
+    "articleSection" : "post",
+    "name" : "Android 热修复原理实战",
+    "headline" : "Android 热修复原理实战",
+    "description" : "代码修复 首先我们定义一个简单的类 public class Text { public static String message(){ return \x26#34;明天不放假\x26#34;; } } 然后再Activity中调用 public void onClick(View v) { switch (v.getId()) { case R.id.code: Toast.makeText(MainActivity.this, Text.message(), Toast.LENGTH_LONG).show();",
+    "inLanguage" : "zh-cn",
+    "author" : "Rockwinder",
+    "creator" : "Rockwinder",
+    "publisher": "Rockwinder",
+    "accountablePerson" : "Rockwinder",
+    "copyrightHolder" : "Rockwinder",
+    "copyrightYear" : "2020",
+    "datePublished": "2020-06-30 15:48:40 \x2b0700 \x2b07",
+    "dateModified" : "2020-06-30 15:48:40 \x2b0700 \x2b07",
+    "url" : "https:\/\/rockwinder.github.io\/post\/android_hot_fix\/",
+    "wordCount" : "2156",
+    "keywords" : [ "hot fix", "Rockwinder`s Blog"]
+}
+</script>
+
+  </head>
+    <body class="">
+        <div class="wrapper">
+            <nav class="navbar">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+    <div class="container">
+        
+            <div class="navbar-header header-back2home-logo">
+                <span class="logo_mark" >>$</span>
+                <a href="https://rockwinder.github.io/">
+                    <span class="logo_text" >cd /home/</span>
+                    <span class="logo_cursor" ></span>
+                </a>
+            </div>
+        
+        <div class="navbar-right">
+                
+                <span class="menu">
+                
+                <a class="menu-item" href="/post/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+                <span class="divide"></span>
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a>
+                </span>
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+     <div class="container">
+        <div class="navbar">
+            <div class="navbar-header header-logo">
+                    <a href="https://rockwinder.github.io/">Rockwinder`s Blog</a>
+            </div>
+            <div class="navbar-right">
+                <div><a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a></div>
+                <div class="menu-toggle">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                <nav class="mb-md">
+                    
+                    
+                        <a class="menu-item" href="/post/" title="">
+                            <h3>Blog</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/categories/" title="">
+                            <h3>Categories</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/tags/" title="">
+                            <h3>Tags</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/about/" title="">
+                            <h3>About</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                </nav>
+        </div>
+    </div>
+</nav>
+            <main class="main">
+                <div class="container">
+                    
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Android 热修复原理实战</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://rockwinder.github.io/" rel="author">Rockwinder</a> with ♥
+                <span class="post-time">
+                on <time datetime=2020-06-30 itemprop="datePublished">June 30, 2020</time>
+                </span>
+                in
+                
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        
+                        
+                        
+                          <a href="https://rockwinder.github.io/categories/android/"> android, </a>
+                        
+                        
+                </span>
+                <span class="post-word-count">2156 words</span>
+        </div>
+    </header>
+
+    <div class="post-content">
+        
+
+        
+        
+            
+        
+
+        
+        
+        
+        
+        
+
+        
+        
+        
+
+        <h2 id="代码修复">代码修复</h2>
+<p>首先我们定义一个简单的类</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Text</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String <span style="color:#a6e22e">message</span><span style="color:#f92672">(){</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;明天不放假&#34;</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>然后再Activity中调用</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onClick</span><span style="color:#f92672">(</span>View v<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">switch</span> <span style="color:#f92672">(</span>v<span style="color:#f92672">.</span><span style="color:#a6e22e">getId</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">case</span> R<span style="color:#f92672">.</span><span style="color:#a6e22e">id</span><span style="color:#f92672">.</span><span style="color:#a6e22e">code</span><span style="color:#f92672">:</span>
+                Toast<span style="color:#f92672">.</span><span style="color:#a6e22e">makeText</span><span style="color:#f92672">(</span>MainActivity<span style="color:#f92672">.</span><span style="color:#a6e22e">this</span><span style="color:#f92672">,</span> Text<span style="color:#f92672">.</span><span style="color:#a6e22e">message</span><span style="color:#f92672">(),</span> Toast<span style="color:#f92672">.</span><span style="color:#a6e22e">LENGTH_LONG</span><span style="color:#f92672">).</span><span style="color:#a6e22e">show</span><span style="color:#f92672">();</span>
+                <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+</code></pre></div><p>点击按钮就会弹出<code>明天不放假</code>的消息，我们的目标把<code>明天不放假</code>修复为<code>No,明天放假</code></p>
+<h3 id="第一步-制作补丁包">第一步 制作补丁包</h3>
+<p><strong>首先改代码</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Text</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String <span style="color:#a6e22e">message</span><span style="color:#f92672">(){</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;No，明天放假&#34;</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><strong>然后把Text.java 编译成class</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">在命令行输入 javac Text<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span>
+</code></pre></div><p>这样你就拿到了class文件</p>
+<p><strong>然后把你的class文件放入和包名一样的文件夹</strong></p>
+<p><strong>把你的文件夹打成jar包</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">在命令行输入 jar <span style="color:#f92672">-</span>cvf patch<span style="color:#f92672">.</span><span style="color:#a6e22e">jar</span> com
+</code></pre></div><p><strong>把你的jar包执行dex命令</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">在命令行输入 dx <span style="color:#f92672">--</span>dex <span style="color:#f92672">--</span>output<span style="color:#f92672">=</span>patch_dex<span style="color:#f92672">.</span><span style="color:#a6e22e">jar</span> patch<span style="color:#f92672">.</span><span style="color:#a6e22e">jar</span>
+</code></pre></div><p><strong>最后把你制作的补丁包放入sdcard中</strong></p>
+<h3 id="写代码">写代码</h3>
+<p>我们已经说过原理，就不在重复说了，不知道的可以看我之前的文章<a href="https://juejin.im/post/5de084e5f265da05ec6b632e">Android 热修复原理解析</a></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">patch_class</span><span style="color:#f92672">(</span>Context context<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">//获取ClassLoader
+</span><span style="color:#75715e"></span>            ClassLoader classLoader <span style="color:#f92672">=</span> MainActivity<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClassLoader</span><span style="color:#f92672">();</span>
+            <span style="color:#75715e">//获取BaseDexClassLoader的class对象
+</span><span style="color:#75715e"></span>            Class<span style="color:#f92672">&lt;?&gt;</span> superclass <span style="color:#f92672">=</span> classLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getSuperclass</span><span style="color:#f92672">();</span>
+            <span style="color:#75715e">//反射获取BaseDexClassLoader的变量pathList
+</span><span style="color:#75715e"></span>            Field baseDexpathList <span style="color:#f92672">=</span> superclass<span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredField</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;pathList&#34;</span><span style="color:#f92672">);</span>
+            <span style="color:#75715e">//设置可访问
+</span><span style="color:#75715e"></span>            baseDexpathList<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+            <span style="color:#75715e">//获取当前内存中的PathClassLoader的pathList对象
+</span><span style="color:#75715e"></span>            Object pathlist <span style="color:#f92672">=</span> baseDexpathList<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>classLoader<span style="color:#f92672">);</span>
+            <span style="color:#75715e">//获取DexpathList中的dexElements成员变量
+</span><span style="color:#75715e"></span>            Field dexElementsFiled <span style="color:#f92672">=</span> pathlist<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getDeclaredField</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dexElements&#34;</span><span style="color:#f92672">);</span>
+            <span style="color:#75715e">//设置可访问
+</span><span style="color:#75715e"></span>            dexElementsFiled<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+            <span style="color:#75715e">//获取当前pathList中的dexElements数组对象
+</span><span style="color:#75715e"></span>            Object<span style="color:#f92672">[]</span> dexElements <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>Object<span style="color:#f92672">[])</span> dexElementsFiled<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>pathlist<span style="color:#f92672">);</span>
+            <span style="color:#75715e">//获取pathList中的makeDexElements方法
+</span><span style="color:#75715e"></span>            Method makeDexElements <span style="color:#f92672">=</span> pathlist<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getDeclaredMethod</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;makeDexElements&#34;</span><span style="color:#f92672">,</span>
+                    List<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> File<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> List<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> ClassLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+            makeDexElements<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+            <span style="color:#75715e">//构建第一个参数，补丁包
+</span><span style="color:#75715e"></span>            ArrayList<span style="color:#f92672">&lt;</span>File<span style="color:#f92672">&gt;</span> files <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;&gt;();</span>
+            <span style="color:#75715e">//获取补丁包
+</span><span style="color:#75715e"></span>            File file <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span>copyFile<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/sdcard/patch_dex.jar&#34;</span><span style="color:#f92672">,</span> context<span style="color:#f92672">));</span>
+            files<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>file<span style="color:#f92672">);</span>
+            <span style="color:#75715e">//构建第二个参数，指定解压目录
+</span><span style="color:#75715e"></span>            File optimizedDirectory <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span>context<span style="color:#f92672">.</span><span style="color:#a6e22e">getFilesDir</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getAbsolutePath</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span>
+                    File<span style="color:#f92672">.</span><span style="color:#a6e22e">separator</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;patch&#34;</span><span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>optimizedDirectory<span style="color:#f92672">.</span><span style="color:#a6e22e">exists</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+                optimizedDirectory<span style="color:#f92672">.</span><span style="color:#a6e22e">mkdirs</span><span style="color:#f92672">();</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#75715e">//构建第三个参数
+</span><span style="color:#75715e"></span>            ArrayList<span style="color:#f92672">&lt;</span>IOException<span style="color:#f92672">&gt;</span> suppressedExceptions <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span>IOException<span style="color:#f92672">&gt;();</span>
+            <span style="color:#75715e">//执行makeDexElements方法,获取补丁包的dexElement数组
+</span><span style="color:#75715e"></span>            Object<span style="color:#f92672">[]</span> patchdexElements <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>Object<span style="color:#f92672">[])</span> makeDexElements<span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>pathlist<span style="color:#f92672">,</span> files<span style="color:#f92672">,</span>
+                    optimizedDirectory<span style="color:#f92672">,</span> suppressedExceptions<span style="color:#f92672">,</span> classLoader<span style="color:#f92672">);</span>
+            <span style="color:#75715e">//创建一个数组
+</span><span style="color:#75715e"></span>            Object<span style="color:#f92672">[]</span> finalArray <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>Object<span style="color:#f92672">[])</span> Array<span style="color:#f92672">.</span><span style="color:#a6e22e">newInstance</span><span style="color:#f92672">(</span>dexElements<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getComponentType</span><span style="color:#f92672">(),</span>
+                    dexElements<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">+</span> patchdexElements<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">);</span>
+            <span style="color:#75715e">//把补丁包放到刚创建的数组
+</span><span style="color:#75715e"></span>            System<span style="color:#f92672">.</span><span style="color:#a6e22e">arraycopy</span><span style="color:#f92672">(</span>patchdexElements<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> finalArray<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> patchdexElements<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">);</span>
+            <span style="color:#75715e">//把原先的数组放入新建的数组
+</span><span style="color:#75715e"></span>            System<span style="color:#f92672">.</span><span style="color:#a6e22e">arraycopy</span><span style="color:#f92672">(</span>dexElements<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> finalArray<span style="color:#f92672">,</span> patchdexElements<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">,</span> dexElements<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">);</span>
+            <span style="color:#75715e">//把新数组替换掉原先的数组
+</span><span style="color:#75715e"></span>            dexElementsFiled<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>pathlist<span style="color:#f92672">,</span> finalArray<span style="color:#f92672">);</span>
+
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>NoSuchFieldException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IllegalAccessException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>NoSuchMethodException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>InvocationTargetException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><p>主要就是把你制作的补丁包解析为数组，然后和原数组合并，并且把你的补丁包放在数组的第一位，这样就会先加载你修复过的文件</p>
+<h3 id="效果">效果</h3>
+<p>sc.png</p>
+<p><img src="https://s1.ax1x.com/2020/06/30/NI9xDP.jpg" alt="img" loading="lazy" ></p>
+<p>sc.png</p>
+<p><img src="https://s1.ax1x.com/2020/06/30/NI9vut.jpg" alt="img" loading="lazy" ></p>
+<h3 id="需要注意的地方">需要注意的地方</h3>
+<p><strong>不能即时生效</strong>：如果你先加载的bug类，再点击<code>代码修复</code>按钮是没有效果的,建议需要卸载apk，在重新安装，因为你的bug类加载后，就不会加载你修复的类，具体可以看这个，<a href="https://juejin.im/post/5dd5fac6e51d4536996c8e9a">JVM 类加载机制</a></p>
+<h2 id="资源修复">资源修复</h2>
+<p>原理也是之前讲过了，不懂的可以看</p>
+<p><a href="https://juejin.im/post/5de9f98f518825127d107638">Android APK资源加载流程</a></p>
+<p><a href="https://juejin.im/post/5de084e5f265da05ec6b632e">Android 热修复原理解析</a></p>
+<p>我们先写一个正常的类加载资源图片</p>
+<p><img src="https://s1.ax1x.com/2020/06/30/NIPps1.jpg" alt="img" loading="lazy" ></p>
+<p><img src="https://s1.ax1x.com/2020/06/30/NIPSMR.jpg" alt="img" loading="lazy" ></p>
+<p>把你的资源放入文件夹中，然后代码加载</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onClick</span><span style="color:#f92672">(</span>View v<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">switch</span> <span style="color:#f92672">(</span>v<span style="color:#f92672">.</span><span style="color:#a6e22e">getId</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">case</span> R<span style="color:#f92672">.</span><span style="color:#a6e22e">id</span><span style="color:#f92672">.</span><span style="color:#a6e22e">resource</span><span style="color:#f92672">:</span>
+                mImageView<span style="color:#f92672">.</span><span style="color:#a6e22e">setImageResource</span><span style="color:#f92672">(</span>R<span style="color:#f92672">.</span><span style="color:#a6e22e">mipmap</span><span style="color:#f92672">.</span><span style="color:#a6e22e">aaaa</span><span style="color:#f92672">);</span>
+                <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+</code></pre></div><p><strong>准备补丁包</strong></p>
+<p>这个没什么好说的，直接把你需要改的图片替换掉就行，比如我们改成了这个</p>
+<p><img src="https://s1.ax1x.com/2020/06/30/NIP9qx.jpg" alt="img" loading="lazy" ></p>
+<p>然后build apk，拿到改过的apk,推入sdcard</p>
+<p>这样就完成了</p>
+<h3 id="写代码-1">写代码</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">monkeyPatchExistingResources</span><span style="color:#f92672">(</span><span style="color:#a6e22e">@Nullable</span> Context context<span style="color:#f92672">,</span>
+                                                    <span style="color:#a6e22e">@Nullable</span> String externalResourceFile<span style="color:#f92672">,</span>
+                                                    <span style="color:#a6e22e">@Nullable</span> Collection<span style="color:#f92672">&lt;</span>Activity<span style="color:#f92672">&gt;</span> activities<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>externalResourceFile <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">//利用反射创建一个新的AssetManager
+</span><span style="color:#75715e"></span>            AssetManager newAssetManager <span style="color:#f92672">=</span> AssetManager<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getConstructor</span><span style="color:#f92672">().</span><span style="color:#a6e22e">newInstance</span><span style="color:#f92672">();</span>
+            <span style="color:#75715e">//利用反射获取addAssetPath方法
+</span><span style="color:#75715e"></span>            Method mAddAssetPath <span style="color:#f92672">=</span> AssetManager<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredMethod</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;addAssetPath&#34;</span><span style="color:#f92672">,</span> String<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+            mAddAssetPath<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+            <span style="color:#75715e">//利用反射调用addAssetPath方法加载外部的资源（SD卡）
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(((</span>Integer<span style="color:#f92672">)</span> mAddAssetPath<span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>newAssetManager<span style="color:#f92672">,</span> externalResourceFile<span style="color:#f92672">))</span> <span style="color:#f92672">==</span> 0<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> IllegalStateException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Could not create new AssetManager&#34;</span><span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#75715e">// Kitkat needs this method call, Lollipop doesn&#39;t. However, it doesn&#39;t seem to cause any harm
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// in L, so we do it unconditionally.
+</span><span style="color:#75715e"></span>            Method mEnsureStringBlocks <span style="color:#f92672">=</span> AssetManager<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredMethod</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;ensureStringBlocks&#34;</span><span style="color:#f92672">);</span>
+            mEnsureStringBlocks<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+            mEnsureStringBlocks<span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>newAssetManager<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>activities <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                <span style="color:#75715e">//遍历activities
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Activity activity <span style="color:#f92672">:</span> activities<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                    <span style="color:#75715e">//拿到Activity的Resources
+</span><span style="color:#75715e"></span>                    Resources resources <span style="color:#f92672">=</span> activity<span style="color:#f92672">.</span><span style="color:#a6e22e">getResources</span><span style="color:#f92672">();</span>
+                    <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+                        <span style="color:#75715e">//获取Resources的成员变量mAssets
+</span><span style="color:#75715e"></span>                        Field mAssets <span style="color:#f92672">=</span> Resources<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredField</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mAssets&#34;</span><span style="color:#f92672">);</span>
+                        mAssets<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+                        <span style="color:#75715e">//给成员变量mAssets重新赋值为自己创建的newAssetManager
+</span><span style="color:#75715e"></span>                        mAssets<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>resources<span style="color:#f92672">,</span> newAssetManager<span style="color:#f92672">);</span>
+                    <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Throwable ignore<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                        Field mResourcesImpl <span style="color:#f92672">=</span> Resources<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredField</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mResourcesImpl&#34;</span><span style="color:#f92672">);</span>
+                        mResourcesImpl<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+                        Object resourceImpl <span style="color:#f92672">=</span> mResourcesImpl<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>resources<span style="color:#f92672">);</span>
+                        Field implAssets <span style="color:#f92672">=</span> resourceImpl<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getDeclaredField</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mAssets&#34;</span><span style="color:#f92672">);</span>
+                        implAssets<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+                        implAssets<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>resourceImpl<span style="color:#f92672">,</span> newAssetManager<span style="color:#f92672">);</span>
+                    <span style="color:#f92672">}</span>
+                    <span style="color:#75715e">//获取activity的theme
+</span><span style="color:#75715e"></span>                    Resources<span style="color:#f92672">.</span><span style="color:#a6e22e">Theme</span> theme <span style="color:#f92672">=</span> activity<span style="color:#f92672">.</span><span style="color:#a6e22e">getTheme</span><span style="color:#f92672">();</span>
+                    <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+                        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+                            <span style="color:#75715e">//反射得到Resources.Theme的mAssets变量
+</span><span style="color:#75715e"></span>                            Field ma <span style="color:#f92672">=</span> Resources<span style="color:#f92672">.</span><span style="color:#a6e22e">Theme</span><span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredField</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mAssets&#34;</span><span style="color:#f92672">);</span>
+                            ma<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+                            <span style="color:#75715e">//将Resources.Theme的mAssets替换成newAssetManager
+</span><span style="color:#75715e"></span>                            ma<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>theme<span style="color:#f92672">,</span> newAssetManager<span style="color:#f92672">);</span>
+                        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>NoSuchFieldException ignore<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                            Field themeField <span style="color:#f92672">=</span> Resources<span style="color:#f92672">.</span><span style="color:#a6e22e">Theme</span><span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredField</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mThemeImpl&#34;</span><span style="color:#f92672">);</span>
+                            themeField<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+                            Object impl <span style="color:#f92672">=</span> themeField<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>theme<span style="color:#f92672">);</span>
+                            Field ma <span style="color:#f92672">=</span> impl<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getDeclaredField</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mAssets&#34;</span><span style="color:#f92672">);</span>
+                            ma<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+                            ma<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>impl<span style="color:#f92672">,</span> newAssetManager<span style="color:#f92672">);</span>
+                        <span style="color:#f92672">}</span>
+                        Field mt <span style="color:#f92672">=</span> ContextThemeWrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredField</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mTheme&#34;</span><span style="color:#f92672">);</span>
+                        mt<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+                        mt<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>activity<span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+                        Method mtm <span style="color:#f92672">=</span> ContextThemeWrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredMethod</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;initializeTheme&#34;</span><span style="color:#f92672">);</span>
+                        mtm<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+                        mtm<span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>activity<span style="color:#f92672">);</span>
+                        Method mCreateTheme <span style="color:#f92672">=</span> AssetManager<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredMethod</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;createTheme&#34;</span><span style="color:#f92672">);</span>
+                        mCreateTheme<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+                        Object internalTheme <span style="color:#f92672">=</span> mCreateTheme<span style="color:#f92672">.</span><span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>newAssetManager<span style="color:#f92672">);</span>
+                        Field mTheme <span style="color:#f92672">=</span> Resources<span style="color:#f92672">.</span><span style="color:#a6e22e">Theme</span><span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredField</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mTheme&#34;</span><span style="color:#f92672">);</span>
+                        mTheme<span style="color:#f92672">.</span><span style="color:#a6e22e">setAccessible</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+                        mTheme<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>theme<span style="color:#f92672">,</span> internalTheme<span style="color:#f92672">);</span>
+                    <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Throwable e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                        Log<span style="color:#f92672">.</span><span style="color:#a6e22e">e</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mmm&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Failed to update existing theme for activity &#34;</span> <span style="color:#f92672">+</span> activity<span style="color:#f92672">,</span>
+                                e<span style="color:#f92672">);</span>
+                    <span style="color:#f92672">}</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">}</span>
+</code></pre></div><p>代码没啥说的，上篇文章已经说过了</p>
+<h3 id="效果-1">效果</h3>
+<p>sc.png</p>
+<p><img src="https://s1.ax1x.com/2020/06/30/NIPidK.jpg" alt="img" loading="lazy" ></p>
+<p>sc.png</p>
+<p><img src="https://s1.ax1x.com/2020/06/30/NIPPZ6.jpg" alt="img" loading="lazy" ></p>
+<h2 id="so修复">SO修复</h2>
+<p>首先准备俩个<code>so</code>，一个是有<code>bug</code>的，一个是修复的，怎么制作<code>so</code>我就不展开讲了，复习一下ndk就行了，把你需要修复的<code>libnative-lib_patch.so</code>推入到<code>sdcard</code>中</p>
+<p>写一个简单的代码，加载so</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onClick</span><span style="color:#f92672">(</span>View v<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">switch</span> <span style="color:#f92672">(</span>v<span style="color:#f92672">.</span><span style="color:#a6e22e">getId</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">case</span> R<span style="color:#f92672">.</span><span style="color:#a6e22e">id</span><span style="color:#f92672">.</span><span style="color:#a6e22e">so</span><span style="color:#f92672">:</span>
+                Toast<span style="color:#f92672">.</span><span style="color:#a6e22e">makeText</span><span style="color:#f92672">(</span>MainActivity<span style="color:#f92672">.</span><span style="color:#a6e22e">this</span><span style="color:#f92672">,</span> SoUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">getKey</span><span style="color:#f92672">(),</span> Toast<span style="color:#f92672">.</span><span style="color:#a6e22e">LENGTH_LONG</span><span style="color:#f92672">).</span><span style="color:#a6e22e">show</span><span style="color:#f92672">();</span>
+                <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+</code></pre></div><p><code>SoUtils.getKey</code>调用so中的方法，打印出字符串</p>
+<h3 id="写代码-2">写代码</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">patch_so</span><span style="color:#f92672">(</span>Context context<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            String localPath <span style="color:#f92672">=</span>  <span style="color:#e6db74">&#34;/sdcard/libnative-lib_patch.so&#34;</span><span style="color:#f92672">;</span>
+            Log<span style="color:#f92672">.</span><span style="color:#a6e22e">v</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mmm&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;LazyBandingLib localPath:&#34;</span> <span style="color:#f92672">+</span> localPath<span style="color:#f92672">);</span>
+
+            <span style="color:#75715e">// 开辟一个输入流
+</span><span style="color:#75715e"></span>            File inFile <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span>localPath<span style="color:#f92672">);</span>
+            <span style="color:#75715e">// 判断需加载的文件是否存在
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>inFile<span style="color:#f92672">.</span><span style="color:#a6e22e">exists</span><span style="color:#f92672">()){</span>
+                System<span style="color:#f92672">.</span><span style="color:#a6e22e">loadLibrary</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;native-lib&#34;</span><span style="color:#f92672">);</span>
+                <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+            FileInputStream fis <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileInputStream<span style="color:#f92672">(</span>inFile<span style="color:#f92672">);</span>
+
+            File dir <span style="color:#f92672">=</span> context<span style="color:#f92672">.</span><span style="color:#a6e22e">getDir</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;libs&#34;</span><span style="color:#f92672">,</span> Context<span style="color:#f92672">.</span><span style="color:#a6e22e">MODE_PRIVATE</span><span style="color:#f92672">);</span>
+            <span style="color:#75715e">// 获取驱动文件输出流
+</span><span style="color:#75715e"></span>            File soFile <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span>dir<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;libnative-lib.so&#34;</span><span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>soFile<span style="color:#f92672">.</span><span style="color:#a6e22e">exists</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+                Log<span style="color:#f92672">.</span><span style="color:#a6e22e">v</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mmm&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;### &#34;</span> <span style="color:#f92672">+</span> soFile<span style="color:#f92672">.</span><span style="color:#a6e22e">getAbsolutePath</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; is not exists&#34;</span><span style="color:#f92672">);</span>
+                FileOutputStream fos <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileOutputStream<span style="color:#f92672">(</span>soFile<span style="color:#f92672">);</span>
+                Log<span style="color:#f92672">.</span><span style="color:#a6e22e">v</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mmm&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;FileOutputStream:&#34;</span> <span style="color:#f92672">+</span> fos<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">());</span>
+
+                <span style="color:#75715e">// 字节数组输出流，写入到内存中(ram)
+</span><span style="color:#75715e"></span>                ByteArrayOutputStream baos <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ByteArrayOutputStream<span style="color:#f92672">();</span>
+                <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> buffer <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span>1024<span style="color:#f92672">];</span>
+                <span style="color:#66d9ef">int</span> len <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>1<span style="color:#f92672">;</span>
+                <span style="color:#66d9ef">while</span> <span style="color:#f92672">((</span>len <span style="color:#f92672">=</span> fis<span style="color:#f92672">.</span><span style="color:#a6e22e">read</span><span style="color:#f92672">(</span>buffer<span style="color:#f92672">))</span> <span style="color:#f92672">!=</span> <span style="color:#f92672">-</span>1<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                    baos<span style="color:#f92672">.</span><span style="color:#a6e22e">write</span><span style="color:#f92672">(</span>buffer<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> len<span style="color:#f92672">);</span>
+                <span style="color:#f92672">}</span>
+                <span style="color:#75715e">// 从内存到写入到具体文件
+</span><span style="color:#75715e"></span>                fos<span style="color:#f92672">.</span><span style="color:#a6e22e">write</span><span style="color:#f92672">(</span>baos<span style="color:#f92672">.</span><span style="color:#a6e22e">toByteArray</span><span style="color:#f92672">());</span>
+                <span style="color:#75715e">// 关闭文件流
+</span><span style="color:#75715e"></span>                baos<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+                fos<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+            <span style="color:#f92672">}</span>
+            fis<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+            Log<span style="color:#f92672">.</span><span style="color:#a6e22e">v</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mmm&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;### System.load start&#34;</span><span style="color:#f92672">);</span>
+            <span style="color:#75715e">// 加载外设驱动
+</span><span style="color:#75715e"></span>            System<span style="color:#f92672">.</span><span style="color:#a6e22e">load</span><span style="color:#f92672">(</span>soFile<span style="color:#f92672">.</span><span style="color:#a6e22e">getAbsolutePath</span><span style="color:#f92672">());</span>
+            Log<span style="color:#f92672">.</span><span style="color:#a6e22e">v</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mmm&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;### System.load End&#34;</span><span style="color:#f92672">);</span>
+
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+
+            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><p>so修复我选择了<code>加载so方法的替换</code>的形式来写，主要逻辑，如果<code>sdcard</code>中有补丁包，则加载补丁包，如果没有则加载<code>APK中的so</code></p>
+<h3 id="效果-2">效果</h3>
+<p>sc.png</p>
+<p><img src="https://s1.ax1x.com/2020/06/30/NIPFIO.jpg" alt="img" loading="lazy" ></p>
+<p>sc.png</p>
+<p><img src="https://s1.ax1x.com/2020/06/30/NIPAiD.jpg" alt="img" loading="lazy" ></p>
+<h3 id="注意事项">注意事项</h3>
+<p>需要先点击一下<code>SO修复</code>按钮，要先把so包加载才行</p>
+<h2 id="总结">总结</h2>
+<p>我的代码运行在华为7.0机器，因为各个的不同的版本，源码细节也会不同，所以其他的版本可能会遇到bug，这就需要自己去看一下源码去解决了，正好也能锻炼一下实际操作能力</p>
+
+    </div>
+
+    <div class="post-copyright">
+            
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rockwinder </span>
+                </p>
+            
+
+            
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://rockwinder.github.io/post/android_hot_fix/>https://rockwinder.github.io/post/android_hot_fix/</span>
+            </p>
+            
+            
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s):
+            
+            <span class="tag"><a href="https://rockwinder.github.io/tags/hot-fix/">
+                    #hot fix</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> ·
+                <span><a href="https://rockwinder.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://rockwinder.github.io/post/tcpip_flow_control/" class="prev" rel="prev" title="TCP IP拥塞控制总结"><i class="iconfont icon-left"></i>&nbsp;TCP IP拥塞控制总结</a>
+        
+        
+    </div>
+
+    <div class="post-comment">
+        
+            
+                <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.css">
+<script src="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.min.js"></script>
+<script>
+    const gitalk = new Gitalk({
+
+        clientID: '',
+        clientSecret: '',
+        repo: '',
+        owner: '',
+        admin: [''],
+        id: location.pathname, 
+        distractionFreeMode: false 
+    });
+    (function () {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+            return;
+        }
+        gitalk.render('gitalk-container');
+    })();
+</script>
+
+            
+        
+    </div>
+</article>
+                </div>
+            </main>
+            <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2017 - 2020</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i>
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://rockwinder.github.io/">Rockwinder</a> | </span>
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/Mogeko/Mogege" target="_blank" rel="external nofollow">Mogege</a></span>
+    </div>
+</footer>
+
+
+
+
+
+>
+<script defer src="/js/vendor_main.min.js"></script>
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script> pangu.spacingPage();</script>
+
+
+
+
+
+        </div>
+    </body>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>android on Rockwinder`s Blog</title>
+    <link>https://rockwinder.github.io/categories/android/</link>
+    <description>Recent content in android on Rockwinder`s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 30 Jun 2020 15:48:40 +0700</lastBuildDate>
+    
+	<atom:link href="https://rockwinder.github.io/categories/android/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Android 热修复原理实战</title>
+      <link>https://rockwinder.github.io/post/android_hot_fix/</link>
+      <pubDate>Tue, 30 Jun 2020 15:48:40 +0700</pubDate>
+      
+      <guid>https://rockwinder.github.io/post/android_hot_fix/</guid>
+      <description>代码修复 首先我们定义一个简单的类 public class Text { public static String message(){ return &amp;#34;明天不放假&amp;#34;; } } 然后再Activity中调用 public void onClick(View v) { switch (v.getId()) { case R.id.code: Toast.makeText(MainActivity.this, Text.message(), Toast.LENGTH_LONG).show();</description>
+    </item>
+    
+  </channel>
+</rss>
