@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noodp"/>
+    <meta name="author" content="Rockwinder">
+    <meta name="description" content="Rockwinder 的个人博客">
+    
+    
+    <link rel="prev" href="https://rockwinder.github.io/post/android_hot_fix/" />
+    
+    <link rel="canonical" href="https://rockwinder.github.io/post/apache_traffic_server/" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <title>
+        
+        
+            Apache Traffic Server技术介绍 | Rockwinder`s Blog
+        
+    </title>
+    <meta name="title" content="Apache Traffic Server技术介绍 | Rockwinder`s Blog">
+    
+<link rel="stylesheet" href="/css/main.min.css">
+
+
+    
+    
+ 
+
+<script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https:\/\/rockwinder.github.io\/"
+    },
+    "articleSection" : "post",
+    "name" : "Apache Traffic Server技术介绍",
+    "headline" : "Apache Traffic Server技术介绍",
+    "description" : "一、Traffic Server是什么？ Traffic Server是一个高性能的web代理缓存，适用于ISP、大型CDN缓存应用。它通过将频繁访问的信息缓",
+    "inLanguage" : "zh-cn",
+    "author" : "Rockwinder",
+    "creator" : "Rockwinder",
+    "publisher": "Rockwinder",
+    "accountablePerson" : "Rockwinder",
+    "copyrightHolder" : "Rockwinder",
+    "copyrightYear" : "2020",
+    "datePublished": "2020-07-21 14:01:40 \x2b0700 \x2b07",
+    "dateModified" : "2020-07-21 14:01:40 \x2b0700 \x2b07",
+    "url" : "https:\/\/rockwinder.github.io\/post\/apache_traffic_server\/",
+    "wordCount" : "5035",
+    "keywords" : [  "Rockwinder`s Blog"]
+}
+</script>
+
+  </head>
+    <body class="">
+        <div class="wrapper">
+            <nav class="navbar">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+    <div class="container">
+        
+            <div class="navbar-header header-back2home-logo">
+                <span class="logo_mark" >>$</span>
+                <a href="https://rockwinder.github.io/">
+                    <span class="logo_text" >cd /home/</span>
+                    <span class="logo_cursor" ></span>
+                </a>
+            </div>
+        
+        <div class="navbar-right">
+                
+                <span class="menu">
+                
+                <a class="menu-item" href="/post/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+                <span class="divide"></span>
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a>
+                </span>
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+     <div class="container">
+        <div class="navbar">
+            <div class="navbar-header header-logo">
+                    <a href="https://rockwinder.github.io/">Rockwinder`s Blog</a>
+            </div>
+            <div class="navbar-right">
+                <div><a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a></div>
+                <div class="menu-toggle">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                <nav class="mb-md">
+                    
+                    
+                        <a class="menu-item" href="/post/" title="">
+                            <h3>Blog</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/categories/" title="">
+                            <h3>Categories</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/tags/" title="">
+                            <h3>Tags</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/about/" title="">
+                            <h3>About</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                </nav>
+        </div>
+    </div>
+</nav>
+            <main class="main">
+                <div class="container">
+                    
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Apache Traffic Server技术介绍</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://rockwinder.github.io/" rel="author">Rockwinder</a> with ♥
+                <span class="post-time">
+                on <time datetime=2020-07-21 itemprop="datePublished">July 21, 2020</time>
+                </span>
+                in
+                
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        
+                        
+                        
+                          <a href="https://rockwinder.github.io/categories/can/"> can, </a>
+                        
+                        
+                </span>
+                <span class="post-word-count">5035 words</span>
+        </div>
+    </header>
+
+    <div class="post-content">
+        
+
+        
+        
+            
+        
+
+        
+        
+        
+        
+        
+
+        
+        
+        
+
+        <h2 id="一traffic-server是什么"><strong>一、Traffic Server是什么？</strong></h2>
+<p>Traffic Server是一个高性能的web代理缓存，适用于ISP、大型CDN缓存应用。它通过将频繁访问的信息缓存在网络的边缘来改善网络的效率和性能。这使访问内容在地理上更接近终端用户，在更快分发的同时也减少了宽带的占用。Traffic Serveer致力于通过充分利用现有可用的宽带，来改善企业、ISP、骨干网提供商和大型企业内部网的内容分发效率。</p>
+<p><strong>与其它同款缓存类应用产品区别：</strong></p>
+<p><img src="https://pic3.zhimg.com/80/v2-237cac2d2c4c00ca106fdd2a85da9143_1440w.jpg" alt="img" loading="lazy" ></p>
+<h2 id="二traffic-server的优点"><strong>二、Traffic Server的优点</strong></h2>
+<p><strong>高可用性</strong></p>
+<p>— 多种管理界面，可管理程度高</p>
+<p>— 容灾设计，可消化常见硬件故障</p>
+<p>— 快速启动，快速恢复</p>
+<p>— 配置可定制程度高，可控制核心参数 500+条目</p>
+<p>— Cache控制能力强</p>
+<p>— 可定制化的日志采集汇总汇报系统</p>
+<p>— 可定制化的数据统计系统</p>
+<p>— 集群化管理能力</p>
+<p><strong>高度可扩展性</strong></p>
+<p>— 模块化程度高：核心http引擎只是TS的2个引擎之一（另一个是流媒体引擎）</p>
+<p>— 高度可编程核心插件设计，可以完成各式各样业务，如已有巨型插件：</p>
+<p>·ESI，Edge Side Include，雅虎贡献的代码</p>
+<p>·Metalink</p>
+<p>·Lua remap插件，支持Lua语言的script</p>
+<p>·Gzip插件，可以对html等文本文件进行深度压缩</p>
+<p>— API扩展支持完善，插件开发介入门槛低</p>
+<p><strong>完善的日志</strong></p>
+<p>— 支持binary日志，高效</p>
+<p>— 支持squid日志格式，兼容</p>
+<p>— 可根据源站分离存储</p>
+<p>— 可将日志发送至日志服务器</p>
+<p>— 内建高性能、可定制化日志聚合功能，自动生成流量/性能报告</p>
+<p><strong>自带高性能日志收集功能，也有独立服务器</strong></p>
+<h2 id="三traffic-server简介"><strong>三、Traffic Server简介</strong></h2>
+<p>Apache Traffic Server（ATS或TS）是一个高性能的、模块化的HTTP代理和缓存服务器，与 Nginx 和 Squid 类似。Traffic Server最初是 Inktomi 公司的商业产品，该公司在2003 年被 Yahoo 收购， 2009 年 8月 Yahoo 向 Apache 软件基金会（ASF）贡献了源代码，并于 2010 年 4月成为了 ASF的顶级项目（Top-LevelProject）。</p>
+<p><img src="https://pic3.zhimg.com/80/v2-fb8d32dc65e6b525b5be67e0f42086d5_1440w.jpg" alt="img" loading="lazy" ></p>
+<p>Apache TrafficServer 现在是一个开源项目，开发语言为C++。</p>
+<p>Traffic Server的开发团队曾经由Chuck Neerdaels领导，他也是Harvest 项目的早期创始人之一，Harvest项目后来发展为十分流行的Squid项目，LeifHedstrom 直接管理着现在的 Traffic Server 开发团队。目前Chuck Neerdaels和Leif Hedstrom都已加盟知名CDN服务提供商Akamai。</p>
+<p>HTTP 代理服务器是 HTTP 服务器的一种实现，处于客户端（一般为浏览器）与另一个 HTTP 服务器之间（通常指源服务器，Origin Server）。HTTP 代理通常分为正向代理、反向代理和透明代理，我们主要关注的是反向代理（Reverse Proxy，见下图）反向代理服务器根据明确配置的映射规则来处理用户请求。反向代理服务器通常会设置一个较大的缓存区，服务器处理请求的同时将请求的内容缓存在服务器本地，当下次用户请求同一个对象时，服务器可直接从缓存区里取出对象，而不用去源服务器去取，起到了加速的效果。另外，配置反向代理的映射规则也能实现负载均衡的功能。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-00b88389b326dd93e9f4b0badd13ca71_1440w.jpg" alt="img" loading="lazy" ></p>
+<p>Traffic Server 在 Yahoo 内部使用了超过 4 年，主要用于 CDN 服务，CDN 用于分发特定的 HTTP 内容，通常是静态的内容如图片、JavaScript、CSS。下面是Traffic Server</p>
+<p><strong>在 Yahoo CDN 应用的一些情况：</strong></p>
+<p>**·**超过 4 年的使用中，缓存中没有出现已知的数据损坏（data corruption）；</p>
+<p>**·**作为反向代理，服务器方便部署和管理，并且大部分配置的更改可直接在线上服务器完成，而不用重启服务；</p>
+<p>**·**在高并发情况下扩展良好，支持 HTTP/1.1 协议特性，如 SSL、Keep-Alive；</p>
+<p>**·**在世界范围内部署了超过 100 台服务器；</p>
+<p>**·**在实际CDN中，每秒处理超过 350,000 次请求，达到 30 Gbps，最大容量至少十倍于普通使用，以应对高峰时的大量请求；</p>
+<p>·在实际 CDN 中，每台服务器有 20,000 到 30,000 的 keep-alive 并发连接，其中有 1,000 到 2,000 的连接是一直很活跃的；</p>
+<p>·实验环境中，单台服务器每秒处理 105,000 次请求，请求的对象是被缓存住的小文件；</p>
+<p>实验环境中，请求大文件时，单台服务器达到 3.6 Gbps（4x GigE NIC bonded）。</p>
+<h2 id="21组件机制"><strong>2.1、组件、机制</strong></h2>
+<p>Traffic Server（TS） 的组成</p>
+<h3 id="211traffic-server缓存"><strong>2.1.1.Traffic Server缓存</strong></h3>
+<p>TS 缓存包含一个高速的对象数据库，数据库根据 URL 和相关头部来索引对象，对于同一对象可以缓存不同版本（如不同的编码、语言）。</p>
+<p>当缓存空间满后，TS 会移除过期的数据。</p>
+<p>当磁盘出错时，TS 将不再使用该块磁盘，转而使用剩下的磁盘。所有磁盘都出错时，TS 将切换至 proxy-only 模式，即只代理，不缓存。</p>
+<p>可分区，即可以给指定的协议和源服务器划分一定数量的磁盘空间</p>
+<h3 id="212ram-缓存"><strong>2.1.2.RAM 缓存</strong></h3>
+<p>内存缓存区储存比较热门的对象，在流量的高峰期时能加快处理速度和降低磁盘负载。</p>
+<h3 id="213主机数据库"><strong>2.1.3.主机数据库</strong></h3>
+<p>储存 DNS 信息，方便主机名到 IP 地址的快速转换</p>
+<p>储存每个主机的 HTTP 版本，方便高级协议特性的使用</p>
+<p>储存主机的可靠性和可用性信息</p>
+<h3 id="214dns-解析器"><strong>2.1.4.DNS 解析器</strong></h3>
+<p>TS 原生实现了 DNS 解析器，不依赖较慢的传统解析库。同时也降低了 DNS 的流量。</p>
+<h3 id="215traffic-server-进程"><strong>2.1.5.Traffic Server 进程</strong></h3>
+<p><strong>traffic_server进程</strong>负责接受连接，处理协议请求，然后从缓存或源服务器获取对象并返回。</p>
+<p><strong>traffic_manager进程</strong>是 TS 的命令和控制设施，负责启动、监控和配置 traffic_server 进程，它也负责代理的端口配置、统计信息的接口、集群管理和虚拟 IP 的故障转移。</p>
+<p>如果 traffic_manager 检测到 traffic_server 进程失效，它立即重启 traffic_server 进程并且维护一个连接队列，保存此时到来的请求，完全重启后这个队列里的连接将按顺序被处理。</p>
+<p><strong>traffic_cop</strong> <strong>进程</strong>监视 traffic_server 和 traffic_manager 进程，此进程周期性的查询 traffic_server 和 traffic_manager 进程的健康状况，如果查询在一定间隔时间内未返回或者返回信息不正确，traffic_cop 将重启 traffic_manager 和 traffic_server 进程。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-54ff579e2b5e4e77c869dc2b589142ce_1440w.jpg" alt="img" loading="lazy" ></p>
+<h3 id="216管理工具"><strong>2.1.6.管理工具</strong></h3>
+<p><strong>Traffic Line</strong> 是命令行程序，可以用来快速监视 Traffic Server 的性能和网络流量，也能配置 TS。</p>
+<p><strong>Traffic Shell</strong> 也是命令行工具，进入该 shell 后有自己一套语法，可代替 Traffic Line 完成监控、配置任务。</p>
+<p>通过 Traffic Line 和 Traffic Shell 对配置作出的修改将会自动写入配置文件中。</p>
+<p><strong>Traffic Server 的底层机制</strong></p>
+<p>Apache Traffic Server 不同于大部分开源代理服务器，它结合了两种技术来处理高并发：</p>
+<p>异步事件处理（Asynchronous event processing）</p>
+<p>多线程（Multi-threading）</p>
+<p>Traffic Server 在多 CPU、多核的硬件上扩展良好，能充分利用所有可用的 CPU 和其他资源。</p>
+<h2 id="22http-代理缓存相关机制"><strong>2.2、HTTP 代理缓存相关机制</strong></h2>
+<h3 id="221-traffic-server-处理请求的过程"><strong>2.2.1. Traffic Server 处理请求的过程</strong></h3>
+<p>1）用户请求一个 web 对象，TS 收到请求</p>
+<p>2）TS 通过对象的地址，在对象数据库（缓存）中去定位该对象</p>
+<p>a.如果对象在缓存中，TS 会检查对象是否新鲜（fresh）</p>
+<p>如果新鲜，TS 从缓存里返回该对象给用户，此时称为缓存命中（cache hit）</p>
+<p>如果不新鲜（stale），TS 会连接源服务器去验证对象是否仍然新鲜，即重新验证（revalidation），如果仍然新鲜，TS 立即将缓存中的副本返回给用户</p>
+<p>b .如果对象不在缓存中（缓存未命中，cache miss），或者缓存的副本不再有效，TS 会去源服务器获取对象，然后同时做下面两件事</p>
+<p>将对象返回给用户</p>
+<p>将对象放到本地缓存中</p>
+<h3 id="222-traffic-server-判断-http-对象是否新鲜fresh的过程"><strong>2.2.2. Traffic Server 判断 HTTP 对象是否新鲜（fresh）的过程</strong></h3>
+<p>如果有 Expires 或者 max-age 头部直接定义缓存的过期时间，TS将对比当前时间和过期时间去判断对象是否新鲜</p>
+<p>如果没有上述头部，TS 将检查 Last-Modified 和 Date 头部（其中Date是源服务器返回对象的时间，如果没有 Last-Modified 头部，TS 会用对象写入缓存的时间以作代替），然后用以下公式算出新鲜的时间范围（freshness_limit，可理解为保质期）:</p>
+<p>freshness_limit = ( Date - Last-Modified ) x 0.1</p>
+<p>0.1 这个参数可以作调整，并且能限制 freshness_limit 的上下限，默认最小是 1 小时，最大是 1 天</p>
+<p>如果没有 Expires 头部或者没有 Last-Modified、Date 头部，TS 将使用默认的 fressness limit</p>
+<p>另外，TS 还会检查 cache.config 配置文件中的 revalidate 规则，该规则可以对特定的 HTTP 对象设置特定的验证时间（特定的域名、IP、一定规则的 URL、特定的客户端等等）</p>
+<h3 id="223-缓存过期staletraffic-server-去源服务器重新验证对象可能的情况"><strong>2.2.3. 缓存过期（stale），Traffic Server 去源服务器重新验证对象可能的情况</strong></h3>
+<p>仍然 fresh，TS 重置 freshness_limit，并返回对象</p>
+<p>对象新副本可用，TS 缓存新对象，并同时返回给用户</p>
+<p>源服务器上的对象不再存在，TS 也不再返回该副本给用户</p>
+<p>源服务器没有响应，TS 返回过期的对象并发出警告。</p>
+<h2 id="三traffic-server部署选项"><strong>三、Traffic Server部署选项</strong></h2>
+<p>l 作为一个WEB代理缓存</p>
+<p>l 作为一个反向代理</p>
+<p>l 部署在多级缓存</p>
+<h2 id="31traffic-server作为web代理缓存"><strong>3.1、Traffic Server作为WEB代理缓存</strong></h2>
+<p>作为WEB代理缓存，Traffic Server接收用户直接发往web server（源服务器）的web内容请求。如果Traffic Server包含请求的内容，它将直接提供服务。如果请求的内容不在缓存里，Traffic Server将作为一个代理：为用户从源服务器去得请求的内容，并在本地保存一份拷贝以服务于将来相同的请求。</p>
+<p>Traffic Server提供直接代理缓存功能，这需要配置用户的客户端软件将请求直接发送给Traffic Server。</p>
+<h2 id="32traffic-server作为反向代理"><strong>3.2、Traffic Server作为反向代理</strong></h2>
+<p>作为反向代理，Traffic Server需要配置为用户直接连接的源服务器（典型的用法是将源服务器的主机名解析到Traffic Server）。反向代理的功能也被称为服务器加速。</p>
+<h2 id="33traffic-server部署在多级缓存"><strong>3.3、Traffic Server部署在多级缓存</strong></h2>
+<p>Traffic Server可以灵活地参与多级缓存，当Internet请求不能在一个缓存中得到满足的时候，将被路由到其他区域的缓存，从而利用附近缓存的内容。在一个多及代理中，Traffic Server可以作为其他Traffic Server系统或者和其相似的缓存产品的父节点或者子节点。</p>
+<p><img src="https://pic2.zhimg.com/80/v2-4b6f778312142a366e7f0e0b70528c45_1440w.jpg" alt="img" loading="lazy" ></p>
+<h2 id="四traffic-server的特点"><strong>四、Traffic Server的特点</strong></h2>
+<p>**缓存：**改进响应时间的同时降低了服务器负载与对宽带的需求，这是通过缓存并且重用经常请求的网页、图片和Web service调用实现的。</p>
+<p>**代理：**很容易添加持续连接、过滤器或异步内容请求，还可以通过添加代理层实现负载均衡。</p>
+<p>**速度：**可支持裸盘设备，绕过文件系统，每秒钟可以处理数以万计的请求。</p>
+<p>**可扩展性：**API考虑到了自定义插件，可以修改头与内容，还可以实现新的协议处理器。</p>
+<p>**可靠性：**能够完美处理TB级别的数据，包括正向与反向代理。</p>
+<h2 id="五traffic-server企业级功能与特性介绍"><strong>五、Traffic Server企业级功能与特性介绍</strong></h2>
+<p>·性能强劲 ·灵活的map机制</p>
+<p>·多CPU，多线程支持 ·强大的cluster支持</p>
+<p>·支持raw设备/分区 ·全方位管理界面</p>
+<p>·启动重启以秒记 ·全方位监控接口</p>
+<p>·64位系统支持 ·丰富的扩展接口</p>
+<p>·内存footprint低 ·IO性能优化</p>
+<p>·支持多CPU多核心新硬件架构 ·支持非阻塞IO</p>
+<p>·支持多线程运行 ·支持直接使用裸盘</p>
+<p>·支持一线程处理多个http连接 ·支持PUSH</p>
+<p>·支持自动刷新、正则刷新 ·可以强制cache</p>
+<p>·使用类似squid的coss存储 ·可以删除、批量删除、正则删除</p>
+<p>·支持对存储系统进行partition，以区别存放不同的内容</p>
+<p>·支持对不同域名/协议进行匹配partition</p>
+<p>·支持异步IO和fastIO，IO效率高</p>
+<p>·硬盘采用RRD模式，写入（重写）压力小</p>
+<h2 id="六测试监控管理方案"><strong>六、测试、监控、管理方案</strong></h2>
+<h2 id="61测试方案"><strong>6.1、测试方案</strong></h2>
+<p><img src="https://pic4.zhimg.com/80/v2-a56e8da69deddc256a3e932824d6da81_1440w.png" alt="img" loading="lazy" ></p>
+<p><img src="https://picb.zhimg.com/80/v2-c63ff28d7719e302ea180954be1d2568_1440w.png" alt="img" loading="lazy" ></p>
+<p>n A机作为traffic server节点，B机为源服务器；</p>
+<p>n 向B机上传一个文件；</p>
+<p>n 将域名解析至A机并进行访问该文件；</p>
+<p>n 成功后查看A机是否有缓存文件存在；</p>
+<h2 id="62监控管理方案"><strong>6.2、监控、管理方案</strong></h2>
+<h3 id="621-traffic-server自带命令行监控工具"><strong>6.2.1. Traffic Server自带命令行监控工具</strong></h3>
+<p><strong>实时查看状态工具：</strong></p>
+<p>/usr/local/ats/bin/traffic_shell</p>
+<p><img src="https://pic1.zhimg.com/80/v2-439073f735110845294158b8a4ad8617_1440w.jpg" alt="img" loading="lazy" ></p>
+<p><strong>查看log工具：</strong></p>
+<p>/usr/local/ats/bin/traffic_logstats</p>
+<p>/usr/local/ats/bin/traffic_logcat</p>
+<p><strong>在线服务管理工具：</strong></p>
+<p>/usr/local/ats/bin/traffic_line</p>
+<h3 id="622-traffic-server自带页面管理工具"><strong>6.2.2. Traffic Server自带页面管理工具</strong></h3>
+<p><strong>缓存查询：</strong></p>
+<p><a href="https://link.zhihu.com/?target=http%3A//%7Burl%7D/cache/">http://{url}/cache/</a></p>
+<p><img src="https://picb.zhimg.com/80/v2-9254b708c248bee515599cecbedb12d7_1440w.png" alt="img" loading="lazy" ></p>
+<p><img src="https://pic4.zhimg.com/80/v2-9ab73d199eba14ca24712b7a2db63ab8_1440w.jpg" alt="img" loading="lazy" ></p>
+<p><strong>状态查询：</strong></p>
+<p><a href="https://link.zhihu.com/?target=http%3A//%7Burl%7D/stat/">http://{url}/stat/</a></p>
+<p><img src="https://pic2.zhimg.com/80/v2-0c9d3f2e63234fea3746db305d1a32c9_1440w.jpg" alt="img" loading="lazy" ></p>
+<p><strong>网络和http查询：</strong></p>
+<p><a href="https://link.zhihu.com/?target=http%3A//%7Burl%7D/net/">http://{url}/net/</a></p>
+<p><img src="https://pic4.zhimg.com/80/v2-3a7c4e3bb44b47529b39ce8d85ad7c15_1440w.jpg" alt="img" loading="lazy" ></p>
+<p><strong>Cache内部信息：</strong></p>
+<p><a href="https://link.zhihu.com/?target=http%3A//%7Burl%7D/cache-internal/volumes">http://{url}/cache-internal/volumes</a></p>
+<p><strong>由于信息较多，只截取部分视图：</strong></p>
+<p><img src="https://pic4.zhimg.com/80/v2-bea31e25f7623352b373ecb2a76c675d_1440w.jpg" alt="img" loading="lazy" ></p>
+<h3 id="623-tsar工具"><strong>6.2.3. tsar工具</strong></h3>
+<p>Tsar是淘宝的一个用来收集服务器系统和应用信息的采集报告工具</p>
+<p><img src="https://picb.zhimg.com/80/v2-b4ccaf9e931deae8cedb2660485c321b_1440w.jpg" alt="img" loading="lazy" ></p>
+<p><img src="https://pic1.zhimg.com/80/v2-314ed03a0b5b670468aaca79015b5306_1440w.png" alt="img" loading="lazy" ></p>
+<p><img src="https://picb.zhimg.com/80/v2-d05bfa27454d21e5e504d52022db951d_1440w.jpg" alt="img" loading="lazy" ></p>
+<h3 id="624-zabbix监控系统"><strong>6.2.4. zabbix监控系统</strong></h3>
+<p>zabbix是一个基于WEB界面的提供分布式系统监视以及网络监视功能的企业级的开源解决方案。</p>
+<p>对于Traffic Server监控可方便接入考拉FM当前使用的zabbix监控系统。</p>
+<p>通过脚本对Traffic Server相应信息进行自动化统计及数据整理，并加入zabbix监控系统，制作监控模板，并设置相应报警阀值进行触发器报警等。</p>
+<p>对部分统计数据进行zabbix统计、画图，可以实时了解各系统性能、稳定性、成本情况等。</p>
+<h2 id="七其它"><strong>七、其它</strong></h2>
+<p>Traffic Server 官方网站：<a href="https://link.zhihu.com/?target=http%3A//trafficserver.apache.org/">http://trafficserver.apache.org/</a></p>
+<p>Traffic Server 下载：<a href="https://link.zhihu.com/?target=http%3A//trafficserver.apache.org/downloads/">http://trafficserver.apache.org/downloads/</a></p>
+<p>Traffic Server 手册：<a href="https://link.zhihu.com/?target=https%3A//trafficserver.readthedocs.org/en/latest/index.html">https://trafficserver.readthedocs.org/en/latest/index.html</a></p>
+<p><img src="https://picb.zhimg.com/80/v2-eaf7491e1cb9b7618ee4669e51362a06_1440w.jpg" alt="img" loading="lazy" ></p>
+
+    </div>
+
+    <div class="post-copyright">
+            
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rockwinder </span>
+                </p>
+            
+
+            
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://rockwinder.github.io/post/apache_traffic_server/>https://rockwinder.github.io/post/apache_traffic_server/</span>
+            </p>
+            
+            
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+
+    <div class="post-tags">
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> ·
+                <span><a href="https://rockwinder.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://rockwinder.github.io/post/android_hot_fix/" class="prev" rel="prev" title="Android 热修复原理实战"><i class="iconfont icon-left"></i>&nbsp;Android 热修复原理实战</a>
+        
+        
+    </div>
+
+    <div class="post-comment">
+        
+            
+                <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.css">
+<script src="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.min.js"></script>
+<script>
+    const gitalk = new Gitalk({
+
+        clientID: '',
+        clientSecret: '',
+        repo: '',
+        owner: '',
+        admin: [''],
+        id: location.pathname, 
+        distractionFreeMode: false 
+    });
+    (function () {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+            return;
+        }
+        gitalk.render('gitalk-container');
+    })();
+</script>
+
+            
+        
+    </div>
+</article>
+                </div>
+            </main>
+            <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2017 - 2020</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i>
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://rockwinder.github.io/">Rockwinder</a> | </span>
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/Mogeko/Mogege" target="_blank" rel="external nofollow">Mogege</a></span>
+    </div>
+</footer>
+
+
+
+
+
+>
+<script defer src="/js/vendor_main.min.js"></script>
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script> pangu.spacingPage();</script>
+
+
+
+
+
+        </div>
+    </body>
+</html>
