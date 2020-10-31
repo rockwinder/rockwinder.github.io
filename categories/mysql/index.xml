@@ -6,11 +6,7 @@
     <description>Recent content in mysql on Rockwinder`s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 05 Jun 2020 14:59:13 +0700</lastBuildDate>
-    
-	<atom:link href="https://rockwinder.github.io/categories/mysql/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Fri, 05 Jun 2020 14:59:13 +0700</lastBuildDate><atom:link href="https://rockwinder.github.io/categories/mysql/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>洞悉MySQL底层架构：游走在缓冲与磁盘之间</title>
       <link>https://rockwinder.github.io/post/mysql_underlying_architecture/</link>

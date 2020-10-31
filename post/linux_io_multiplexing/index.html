@@ -53,10 +53,10 @@
     "accountablePerson" : "Rockwinder",
     "copyrightHolder" : "Rockwinder",
     "copyrightYear" : "2019",
-    "datePublished": "2019-06-19 00:00:00 \x2b0000 UTC",
-    "dateModified" : "2019-06-19 00:00:00 \x2b0000 UTC",
+    "datePublished": "2019-06-19 00:00:00 \u002b0000 UTC",
+    "dateModified" : "2019-06-19 00:00:00 \u002b0000 UTC",
     "url" : "https:\/\/rockwinder.github.io\/post\/linux_io_multiplexing\/",
-    "wordCount" : "9611",
+    "wordCount" : "9619",
     "keywords" : [ "io", "Rockwinder`s Blog"]
 }
 </script>
@@ -163,7 +163,7 @@
                         
                         
                 </span>
-                <span class="post-word-count">9611 words</span>
+                <span class="post-word-count">9619 words</span>
         </div>
     </header>
 
@@ -321,7 +321,7 @@
 </blockquote>
 <p>上面的图和blocking IO的图其实并没有太大的不同，事实上，还更差一些。<code>因为这里需要使用两个system call (select 和 recvfrom)，而blocking IO只调用了一个system call (recvfrom)</code>。但是，<code>用select的优势在于它可以同时处理多个connection</code>。</p>
 <p>所以，如果处理的连接数不是很高的话，使用select/epoll的web server不一定比使用multi-threading + blocking IO的web server性能更好，可能延迟还更大。（select/epoll的优势并不是对于单个连接能处理得更快，而是在于能处理更多的连接。）</p>
-<p>在IO multiplexing Model中，<code>实际中，对于每一个socket，一般都设置成为non-blocking</code>，但是，如上图所示，整个用户的process其实是一直被block的。<code>只不过process是被select这个函数block，而不是被socket IO给block</code>。所以<strong><code>IO多路复用是阻塞在select，epoll这样的系统调用之上，而没有阻塞在真正的I/O系统调用如recvfrom之上。</code></strong></p>
+<p>在IO multiplexing Model中，<code>实际中，对于每一个socket，一般都设置成为non-blocking</code>，但是，如上图所示，整个用户的process其实是一直被block的。<code>只不过process是被select这个函数block，而不是被socket IO给block</code>。所以**<code>IO多路复用是阻塞在select，epoll这样的系统调用之上，而没有阻塞在真正的I/O系统调用如recvfrom之上。</code>**</p>
 <p>在I/O编程过程中，<code>当需要同时处理多个客户端接入请求时，可以利用多线程或者I/O多路复用技术进行处理</code>。I/O多路复用技术<code>通过把多个I/O的阻塞复用到同一个select的阻塞上，从而使得系统在单线程的情况下可以同时处理多个客户端请求</code>。与传统的多线程/多进程模型比，<code>I/O多路复用的最大优势是系统开销小</code>，系统不需要创建新的额外进程或者线程，也不需要维护这些进程和线程的运行，降底了系统的维护工作量，节省了系统资源，I/O多路复用的主要应用场景如下：</p>
 <blockquote>
 <p>服务器需要同时处理多个处于监听状态或者多个连接状态的套接字。</p>
@@ -361,7 +361,7 @@
 <p><code>如果这个进程现在被挂起了，例如无事可做 sleep 了，那就把这个进程唤醒</code>，下次有 CPU 空闲的时候，就会调度到这个进程，触发信号通知。</p>
 </blockquote>
 <p>异步 API 说来轻巧，做来难，这主要是对 API 的实现者而言的。Linux 的异步 IO（AIO）支持是 2.6.22 才引入的，还有很多系统调用不支持异步 IO。Linux 的异步 IO 最初是为数据库设计的，<code>因此通过异步 IO 的读写操作不会被缓存或缓冲，这就无法利用操作系统的缓存与缓冲机制</code>。</p>
-<p><strong><code>很多人把 Linux 的 O_NONBLOCK 认为是异步方式，但事实上这是前面讲的同步非阻塞方式。</code></strong>需要指出的是，虽然 Linux 上的 IO API 略显粗糙，但每种编程框架都有封装好的异步 IO 实现。操作系统少做事，把更多的自由留给用户，正是 UNIX 的设计哲学，也是 Linux 上编程框架百花齐放的一个原因。</p>
+<p>**<code>很多人把 Linux 的 O_NONBLOCK 认为是异步方式，但事实上这是前面讲的同步非阻塞方式。</code>**需要指出的是，虽然 Linux 上的 IO API 略显粗糙，但每种编程框架都有封装好的异步 IO 实现。操作系统少做事，把更多的自由留给用户，正是 UNIX 的设计哲学，也是 Linux 上编程框架百花齐放的一个原因。</p>
 <p>从前面 IO 模型的分类中，我们可以看出 AIO 的动机：</p>
 <blockquote>
 <p>同步阻塞模型需要在 IO 操作开始时阻塞应用程序。这意味着不可能同时重叠进行处理和 IO 操作。</p>

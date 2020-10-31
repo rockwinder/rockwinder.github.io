@@ -6,11 +6,7 @@
     <description>Recent content in network on Rockwinder`s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 05 Mar 2019 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://rockwinder.github.io/categories/network/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Tue, 05 Mar 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://rockwinder.github.io/categories/network/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>tun2socks</title>
       <link>https://rockwinder.github.io/post/tun2socks/</link>

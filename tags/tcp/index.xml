@@ -6,11 +6,7 @@
     <description>Recent content in tcp on Rockwinder`s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 25 Jun 2020 20:59:32 +0700</lastBuildDate>
-    
-	<atom:link href="https://rockwinder.github.io/tags/tcp/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 25 Jun 2020 20:59:32 +0700</lastBuildDate><atom:link href="https://rockwinder.github.io/tags/tcp/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>TCP IP拥塞控制总结</title>
       <link>https://rockwinder.github.io/post/tcpip_flow_control/</link>
