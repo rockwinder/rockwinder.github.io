@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noodp"/>
+    <meta name="author" content="Rockwinder">
+    <meta name="description" content="Rockwinder 的个人博客">
+    
+    
+    <link rel="prev" href="https://rockwinder.github.io/post/why_redis_so_soft/" />
+    
+    <link rel="canonical" href="https://rockwinder.github.io/post/javascript_confusion_encrypt/" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <title>
+        
+        
+            JavaScript混淆安全加固 | Rockwinder`s Blog
+        
+    </title>
+    <meta name="title" content="JavaScript混淆安全加固 | Rockwinder`s Blog">
+    
+<link rel="stylesheet" href="/css/main.min.css">
+
+
+    
+    
+ 
+
+<script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https:\/\/rockwinder.github.io\/"
+    },
+    "articleSection" : "post",
+    "name" : "JavaScript混淆安全加固",
+    "headline" : "JavaScript混淆安全加固",
+    "description" : "前言 在安全攻防战场中，前端代码都是公开的，那么对前端进行加密有意义吗？可能大部分人的回答是，毫无意义，不要自创加密算法，直接用HTTPS吧。",
+    "inLanguage" : "zh-cn",
+    "author" : "Rockwinder",
+    "creator" : "Rockwinder",
+    "publisher": "Rockwinder",
+    "accountablePerson" : "Rockwinder",
+    "copyrightHolder" : "Rockwinder",
+    "copyrightYear" : "2020",
+    "datePublished": "2020-12-28 11:22:23 \u002b0800 CST",
+    "dateModified" : "2020-12-28 11:22:23 \u002b0800 CST",
+    "url" : "https:\/\/rockwinder.github.io\/post\/javascript_confusion_encrypt\/",
+    "wordCount" : "6597",
+    "keywords" : [ "混淆", "Rockwinder`s Blog"]
+}
+</script>
+
+  </head>
+    <body class="">
+        <div class="wrapper">
+            <nav class="navbar">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+    <div class="container">
+        
+            <div class="navbar-header header-back2home-logo">
+                <span class="logo_mark" >>$</span>
+                <a href="https://rockwinder.github.io/">
+                    <span class="logo_text" >cd /home/</span>
+                    <span class="logo_cursor" ></span>
+                </a>
+            </div>
+        
+        <div class="navbar-right">
+                
+                <span class="menu">
+                
+                <a class="menu-item" href="/post/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+                <span class="divide"></span>
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a>
+                </span>
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+     <div class="container">
+        <div class="navbar">
+            <div class="navbar-header header-logo">
+                    <a href="https://rockwinder.github.io/">Rockwinder`s Blog</a>
+            </div>
+            <div class="navbar-right">
+                <div><a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a></div>
+                <div class="menu-toggle">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                <nav class="mb-md">
+                    
+                    
+                        <a class="menu-item" href="/post/" title="">
+                            <h3>Blog</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/categories/" title="">
+                            <h3>Categories</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/tags/" title="">
+                            <h3>Tags</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/about/" title="">
+                            <h3>About</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                </nav>
+        </div>
+    </div>
+</nav>
+            <main class="main">
+                <div class="container">
+                    
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">JavaScript混淆安全加固</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://rockwinder.github.io/" rel="author">Rockwinder</a> with ♥
+                <span class="post-time">
+                on <time datetime=2020-12-28 itemprop="datePublished">December 28, 2020</time>
+                </span>
+                in
+                
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        
+                        
+                        
+                          <a href="https://rockwinder.github.io/categories/javascript/"> javascript, </a>
+                        
+                        
+                </span>
+                <span class="post-word-count">6597 words</span>
+        </div>
+    </header>
+
+    <div class="post-content">
+        
+
+        
+        
+            
+        
+
+        
+        
+        
+        
+        
+
+        
+        
+        
+
+        <h2 id="前言">前言</h2>
+<p>在安全攻防战场中，前端代码都是公开的，那么对前端进行加密有意义吗？可能大部分人的回答是，<code>毫无意义</code>，不要自创加密算法，直接用HTTPS吧。但事实上，即使不了解密码学，也应知道是<code>有意义</code>的，因为<code>加密前</code>和<code>解密后</code>的环节，是不受保护的。HTTPS只能保护传输层，此外别无用处。</p>
+<p>而加密环节又分：</p>
+<ul>
+<li>传输加密（对抗链路破解）</li>
+<li>数据加密（对抗协议破解）</li>
+<li>代码加密（隐藏算法、反调试&hellip;）</li>
+</ul>
+<p>本文主要列举一些我见到的，我想到的一些加密方式，其实确切的说，应该叫混淆，不应该叫加密。</p>
+<p>那么，代码混淆的具体原理是什么？其实很简单，就是去除代码中尽可能多的有意义的信息，比如注释、换行、空格、代码负号、变量重命名、属性重命名（允许的情况下）、无用代码的移除等等。因为代码是公开的，我们必须承认没有任何一种算法可以完全不被破解，所以，我们只能尽可能增加攻击者阅读代码的成本。</p>
+<p><a href="https://github.com/yacan8/blog/blob/master/posts/JavaScript%E6%B7%B7%E6%B7%86%E5%AE%89%E5%85%A8%E5%8A%A0%E5%9B%BA.md">原文地址</a></p>
+<h2 id="语法树ast混淆">语法树AST混淆</h2>
+<p>在保证代码原本的功能性的情况下，我们可以对代码的AST按需进行变更，然后将变更后的AST在生成一份代码进行输出，达到混淆的目的，我们最常用的<a href="https://www.npmjs.com/package/uglify-js">uglify-js</a>就是这样对代码进行混淆的，当然<code>uglify-js</code>的混淆只是主要进行代码压缩，即我们下面讲到的变量名混淆。</p>
+<h3 id="变量名混淆">变量名混淆</h3>
+<p>将变量名混淆成阅读比较难阅读的字符，增加代码阅读难度，上面说的<code>uglify-js</code>进行的混淆，就是把变量混淆成了短名（主要是为了进行代码压缩），而现在大部分安全方向的混淆，都会将其混淆成类16进制变量名，效果如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">test</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;hello&#39;</span>;
+
+</code></pre></div><p>混淆后：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x7deb</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;hello&#39;</span>;
+
+</code></pre></div><p>注意事项：</p>
+<ol>
+<li>
+<p>eval语法，eval函数中可能使用了原来的变量名，如果不对其进行处理，可能会运行报错，如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">test</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;hello&#39;</span>;
+eval(<span style="color:#e6db74">&#39;console.log(test)&#39;</span>);
+   
+</code></pre></div><p>如果不对eval中的console.log(test)进行关联的混淆，则会报错。不过，如果eval语法超出了静态分析的范畴，比如：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">test</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;hello&#39;</span>;
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">variableName</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;test&#39;</span>;
+eval(<span style="color:#e6db74">&#39;console.log(&#39;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">variableName</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;)&#39;</span>);
+   
+</code></pre></div><p>这种咋办呢，可能要进行遍历AST找到其运行结果，然后在进行混淆，不过貌似成本比较高。</p>
+</li>
+<li>
+<p>全局变量的编码，如果代码是作为SDK进行输出的，我们需要保存全局变量名的不变，比如：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">$</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">id</span>) {
+    <span style="color:#66d9ef">return</span> document.<span style="color:#a6e22e">getElementById</span>(<span style="color:#a6e22e">id</span>);
+};
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+   
+</code></pre></div><p><code>$</code>变量是放在全局下的，混淆过后如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x6482fa</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">id</span>) {
+    <span style="color:#66d9ef">return</span> document.<span style="color:#a6e22e">getElementById</span>(<span style="color:#a6e22e">id</span>);
+};
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+   
+</code></pre></div><p>那么如果依赖这一段代码的模块，使用<code>$('id')</code>调用自然会报错，因为这个全局变量已经被混淆了。</p>
+</li>
+</ol>
+<h3 id="常量提取">常量提取</h3>
+<p>将JS中的常量提取到数组中，调用的时候用数组下标的方式调用，这样的话直接读懂基本不可能了，要么反AST处理下，要么一步一步调试，工作量大增。</p>
+<p>以上面的代码为例：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">test</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;hello&#39;</span>;
+
+</code></pre></div><p>混淆过后：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x9d2b</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;hello&#39;</span>];
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0xb7de</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">_0x4c7513</span>) {
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x96ade5</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0x9d2b</span>[<span style="color:#a6e22e">_0x4c7513</span>];
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">_0x96ade5</span>;
+};
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">test</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0xb7de</span>(<span style="color:#ae81ff">0</span>);
+
+</code></pre></div><p>当然，我们可以根据需求，将数组转化为二位数组、三维数组等，只需要在需要用到的地方获取就可以。</p>
+<h3 id="常量混淆">常量混淆</h3>
+<p>将常量进行加密处理，上面的代码中，虽然已经是混淆过后的代码了，但是<code>hello</code>字符串还是以明文的形式出现在代码中，可以利用JS中16进制编码会直接解码的特性将关键字的Unicode进行了16进制编码。如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">test</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;hello&#39;</span>;
+
+</code></pre></div><p>结合常量提取得到混淆结果：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x9d2b</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;\x68\x65\x6c\x6c\x6f&#39;</span>];
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0xb7de</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">_0x4c7513</span>) {
+    <span style="color:#a6e22e">_0x4c7513</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0x4c7513</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">0x0</span>;
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x96ade5</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0x9d2b</span>[<span style="color:#a6e22e">_0x4c7513</span>];
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">_0x96ade5</span>;
+};
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">test</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0xb7de</span>(<span style="color:#e6db74">&#39;0x0&#39;</span>);
+
+</code></pre></div><p>当然，除了JS特性自带的Unicode自动解析以外，也可以自定义一些加解密算法，比如对常量进行base64编码，或者其他的什么rc4等等，只需要使用的时候解密就OK，比如上面的代码用base64编码后：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x9d2b</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;aGVsbG8=&#39;</span>]; <span style="color:#75715e">// base64编码后的字符串
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0xaf421</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">_0xab132</span>) {
+    <span style="color:#75715e">// base64解码函数
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x75aed</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">_0x2cf82</span>) {
+        <span style="color:#75715e">// TODO: 解码
+</span><span style="color:#75715e"></span>    };
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">_0x75aed</span>(<span style="color:#a6e22e">_0xab132</span>);
+}
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0xb7de</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">_0x4c7513</span>) {
+    <span style="color:#a6e22e">_0x4c7513</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0x4c7513</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">0x0</span>;
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x96ade5</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0xaf421</span>(<span style="color:#a6e22e">_0x9d2b</span>[<span style="color:#a6e22e">_0x4c7513</span>]);
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">_0x96ade5</span>;
+};
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">test</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0xb7de</span>(<span style="color:#e6db74">&#39;0x0&#39;</span>);
+
+</code></pre></div><h3 id="运算混淆">运算混淆</h3>
+<p>将所有的逻辑运算符、二元运算符都变成函数，目的也是增加代码阅读难度，让其无法直接通过静态分析得到结果。如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>;
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">j</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span>;
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">k</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">j</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">i</span>;
+
+</code></pre></div><p>混淆后：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x62fae</span> <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">_0xeca4f</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">_0x3c412</span>, <span style="color:#a6e22e">_0xae362</span>) {
+        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">_0x3c412</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">_0xae362</span>;
+    },
+    <span style="color:#a6e22e">_0xe82ae</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">_0x63aec</span>, <span style="color:#a6e22e">_0x678ec</span>) {
+        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">_0x63aec</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">_0x678ec</span>;
+    },
+    <span style="color:#a6e22e">_0x2374a</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">_0x32487</span>, <span style="color:#a6e22e">_0x3a461</span>) {
+        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">_0x32487</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">_0x3a461</span>;
+    }
+};
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0x62fae</span>.<span style="color:#a6e22e">_0e8ca4f</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>);
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">j</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0x62fae</span>.<span style="color:#a6e22e">_0xe82ae</span>(<span style="color:#a6e22e">i</span>, <span style="color:#ae81ff">2</span>);
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">k</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0x62fae</span>.<span style="color:#a6e22e">_0x2374a</span>(<span style="color:#a6e22e">i</span>, <span style="color:#a6e22e">j</span>);
+
+</code></pre></div><p>当然除了逻辑运算符和二元运算符以外，还可以将函数调用、静态字符串进行类似的混淆，如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">fun1</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">name</span>) {
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;hello, &#39;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">name</span>);
+};
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">fun2</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">name</span>, <span style="color:#a6e22e">age</span>) {
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">name</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39; is &#39;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">age</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39; years old&#39;</span>);
+}
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;xiao.ming&#39;</span>;
+<span style="color:#a6e22e">fun1</span>(<span style="color:#a6e22e">name</span>);
+<span style="color:#a6e22e">fun2</span>(<span style="color:#a6e22e">name</span>, <span style="color:#ae81ff">8</span>);
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x62fae</span> <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">_0xe82ae</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">_0x63aec</span>, <span style="color:#a6e22e">_0x678ec</span>) {
+        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">_0x63aec</span>(<span style="color:#a6e22e">_0x678ec</span>);
+    },
+    <span style="color:#a6e22e">_0xeca4f</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">_0x92352</span>, <span style="color:#a6e22e">_0x3c412</span>, <span style="color:#a6e22e">_0xae362</span>) {
+        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">_0x92352</span>(<span style="color:#a6e22e">_0x3c412</span>, <span style="color:#a6e22e">_0xae362</span>)
+    },
+    <span style="color:#a6e22e">_0x2374a</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;xiao.ming&#39;</span>,
+    <span style="color:#a6e22e">_0x5482a</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;hello, &#39;</span>,
+    <span style="color:#a6e22e">_0x837ce</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39; is &#39;</span>,
+    <span style="color:#a6e22e">_0x3226e</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39; years old&#39;</span>
+};
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">fun1</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">name</span>) {
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">_0x62fae</span>.<span style="color:#a6e22e">_0x5482a</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">name</span>);
+};
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">fun2</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">name</span>, <span style="color:#a6e22e">age</span>) {
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">name</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">_0x62fae</span>.<span style="color:#a6e22e">_0x837ce</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">age</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">_0x62fae</span>.<span style="color:#a6e22e">_0x3226e</span>);
+}
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0x62fae</span>.<span style="color:#a6e22e">_0x2374a</span>;
+<span style="color:#a6e22e">_0x62fae</span>.<span style="color:#a6e22e">_0xe82ae</span>(<span style="color:#a6e22e">fun1</span>, <span style="color:#a6e22e">name</span>);
+<span style="color:#a6e22e">_0x62fae</span>.<span style="color:#a6e22e">_0xeca4f</span>(<span style="color:#a6e22e">fun2</span>, <span style="color:#a6e22e">name</span>, <span style="color:#ae81ff">0x8</span>);
+
+</code></pre></div><p>上面的例子中，fun1和fun2内的字符串相加也会被混淆走，静态字符串也会被前面提到的<code>字符串提取</code>抽取到数组中（我就是懒，这部分代码就不写了）。</p>
+<p>需要注意的是，我们每次遇到相同的运算符，需不需要重新生成函数进行替换，这就按个人需求了。</p>
+<h3 id="语法丑化">语法丑化</h3>
+<p>将我们常用的语法混淆成我们不常用的语法，前提是不改变代码的功能。例如for换成do/while，如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">for</span> (<span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">n</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) { 
+    <span style="color:#75715e">// TODO: do something
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+<span style="color:#66d9ef">do</span> {
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">i</span> <span style="color:#f92672">&gt;=</span> <span style="color:#a6e22e">n</span>) <span style="color:#66d9ef">break</span>;
+    
+    <span style="color:#75715e">// TODO: do something
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>;
+} <span style="color:#66d9ef">while</span> (<span style="color:#66d9ef">true</span>)
+
+</code></pre></div><h3 id="动态执行">动态执行</h3>
+<p>将静态执行代码添加动态判断，运行时动态决定运算符，干扰静态分析。</p>
+<p>如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">c</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>;
+
+</code></pre></div><p>混淆过后：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">_0x513fa</span>(<span style="color:#a6e22e">_0x534f6</span>, <span style="color:#a6e22e">_0x85766</span>) { <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">_0x534f6</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">_0x85766</span>; }
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">_0x3f632</span>(<span style="color:#a6e22e">_0x534f6</span>, <span style="color:#a6e22e">_0x534f6</span>) { <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">_0x534f6</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">_0x534f6</span>; }
+
+<span style="color:#75715e">// 动态判定函数
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">_0x3fa24</span>() {
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+}
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">c</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0x3fa24</span>() <span style="color:#f92672">?</span> <span style="color:#a6e22e">_0x513fa</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>) <span style="color:#f92672">:</span> <span style="color:#a6e22e">_0x3f632</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>);
+
+</code></pre></div><h3 id="流程混淆">流程混淆</h3>
+<p>对执行流程进行混淆，又称控制流扁平化，为什么要做混淆执行流程呢？因为在代码开发的过程中，为了使代码逻辑清晰，便于维护和扩展，会把代码编写的逻辑非常清晰。一段代码从输入，经过各种if/else分支，顺序执行之后得到不同的结果，而我们需要将这些执行流程和判定流程进行混淆，让攻击者没那么容易摸清楚我们的执行逻辑。</p>
+<p>控制流扁平化又分顺序扁平化、条件扁平化，</p>
+<h4 id="顺序扁平化">顺序扁平化</h4>
+<p>顾名思义，将按顺序、自上而下执行的代码，分解成数个分支进行执行，如下代码：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">(<span style="color:#66d9ef">function</span> () {
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#ae81ff">1</span>);
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#ae81ff">2</span>);
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#ae81ff">3</span>);
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#ae81ff">4</span>);
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#ae81ff">5</span>);
+})();
+
+</code></pre></div><p>流程图如下：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/6/9/16b3b364cf43de55?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img" loading="lazy" ></p>
+<p>混淆过后代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">(<span style="color:#66d9ef">function</span> () {
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">flow</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;3|4|0|1|2&#39;</span>.<span style="color:#a6e22e">split</span>(<span style="color:#e6db74">&#39;|&#39;</span>), <span style="color:#a6e22e">index</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+    <span style="color:#66d9ef">while</span> (<span style="color:#f92672">!!</span>[]) {
+        <span style="color:#66d9ef">switch</span> (<span style="color:#a6e22e">flow</span>[<span style="color:#a6e22e">index</span><span style="color:#f92672">++</span>]) {
+        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#39;0&#39;</span><span style="color:#f92672">:</span>
+            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#ae81ff">3</span>);
+            <span style="color:#66d9ef">continue</span>;
+        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#39;1&#39;</span><span style="color:#f92672">:</span>
+            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#ae81ff">4</span>);
+            <span style="color:#66d9ef">continue</span>;
+        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#39;2&#39;</span><span style="color:#f92672">:</span>
+            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#ae81ff">5</span>);
+            <span style="color:#66d9ef">continue</span>;
+        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#39;3&#39;</span><span style="color:#f92672">:</span>
+            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#ae81ff">1</span>);
+            <span style="color:#66d9ef">continue</span>;
+        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#39;4&#39;</span><span style="color:#f92672">:</span>
+            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#ae81ff">2</span>);
+            <span style="color:#66d9ef">continue</span>;
+        }
+        <span style="color:#66d9ef">break</span>;
+    }
+}());
+
+</code></pre></div><p>混淆过后的流程图如下：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/6/9/16b3b368ac7f10a0?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img" loading="lazy" ></p>
+<p>流程看起来<code>扁</code>了。</p>
+<h4 id="条件扁平化">条件扁平化</h4>
+<p>条件扁平化的作用是把所有if/else分支的流程，全部扁平到一个流程中，在流程图中拥有相同的入口和出口。</p>
+<p>如下面的代码：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">modexp</span>(<span style="color:#a6e22e">y</span>, <span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">w</span>, <span style="color:#a6e22e">n</span>) {
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">R</span>, <span style="color:#a6e22e">L</span>;
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">k</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">s</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+    <span style="color:#66d9ef">while</span>(<span style="color:#a6e22e">k</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">w</span>) {
+        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">x</span>[<span style="color:#a6e22e">k</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>) {
+            <span style="color:#a6e22e">R</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">s</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">y</span>) <span style="color:#f92672">%</span> <span style="color:#a6e22e">n</span>;
+        }
+        <span style="color:#66d9ef">else</span> {
+            <span style="color:#a6e22e">R</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">s</span>;
+        }
+        <span style="color:#a6e22e">s</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">R</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">R</span> <span style="color:#f92672">%</span> <span style="color:#a6e22e">n</span>;
+        <span style="color:#a6e22e">L</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">R</span>;
+        <span style="color:#a6e22e">k</span><span style="color:#f92672">++</span>;
+    }
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">L</span>;
+}
+
+</code></pre></div><p>如上代码，流程图是这样的</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/6/9/16b3b36bab237eb2?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img" loading="lazy" ></p>
+<p>控制流扁平化后代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">modexp</span>(<span style="color:#a6e22e">y</span>, <span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">w</span>, <span style="color:#a6e22e">n</span>) {
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">R</span>, <span style="color:#a6e22e">L</span>, <span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">k</span>;
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+    <span style="color:#66d9ef">for</span>(;;) {
+        <span style="color:#66d9ef">switch</span>(<span style="color:#a6e22e">next</span>) {
+        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">k</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">s</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">k</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">w</span>) <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">6</span>; <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">x</span>[<span style="color:#a6e22e">k</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>) <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>; <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>; <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">3</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">R</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">s</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">y</span>) <span style="color:#f92672">%</span> <span style="color:#a6e22e">n</span>; <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>; <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">4</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">R</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">s</span>; <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>; <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">5</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">s</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">R</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">R</span> <span style="color:#f92672">%</span> <span style="color:#a6e22e">n</span>; <span style="color:#a6e22e">L</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">R</span>; <span style="color:#a6e22e">k</span><span style="color:#f92672">++</span>; <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">6</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">L</span>;
+        }
+    }
+}
+
+</code></pre></div><p>混淆后的流程图如下：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/6/9/16b3b36e1baf08fd?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img" loading="lazy" ></p>
+<p>直观的感觉就是代码变<code>扁</code>了，所有的代码都挤到了一层当中，这样做的好处在于在让攻击者无法直观，或通过静态分析的方法判断哪些代码先执行哪些后执行，必须要通过动态运行才能记录执行顺序，从而加重了分析的负担。</p>
+<p>需要注意的是，在我们的流程中，无论是顺序流程还是条件流程，如果出现了块作用域的变量声明(const/let)，那么上面的流程扁平化将会出现错误，因为switch/case内部为块作用域，表达式被分到case内部之后，其他case无法取到const/let的变量声明，自然会报错。</p>
+<h4 id="不透明谓词">不透明谓词</h4>
+<p>上面的switch/case的判断是通过数字（也就是谓词）的形式判断的，而且是透明的，可以看到的，为了更加的混淆视听，可以将case判断设定为表达式，让其无法直接判断，比如利用上面代码，改为不透明谓词：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">modexp</span>(<span style="color:#a6e22e">y</span>, <span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">w</span>, <span style="color:#a6e22e">n</span>) {
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>, <span style="color:#a6e22e">c</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">b</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">a</span>;
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">R</span>, <span style="color:#a6e22e">L</span>, <span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">k</span>;
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+    <span style="color:#66d9ef">for</span>(;;) {
+        <span style="color:#66d9ef">switch</span>(<span style="color:#a6e22e">next</span>) {
+        <span style="color:#66d9ef">case</span> (<span style="color:#a6e22e">a</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">b</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">k</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">s</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> (<span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">b</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">k</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">w</span>) <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">6</span>; <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> (<span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">b</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">a</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">x</span>[<span style="color:#a6e22e">k</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>) <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>; <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>; <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> (<span style="color:#ae81ff">3</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">b</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">c</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">R</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">s</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">y</span>) <span style="color:#f92672">%</span> <span style="color:#a6e22e">n</span>; <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>; <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> (<span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">b</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">c</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">R</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">s</span>; <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>; <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> (<span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">c</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">b</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">s</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">R</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">R</span> <span style="color:#f92672">%</span> <span style="color:#a6e22e">n</span>; <span style="color:#a6e22e">L</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">R</span>; <span style="color:#a6e22e">k</span><span style="color:#f92672">++</span>; <span style="color:#a6e22e">next</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> (<span style="color:#ae81ff">4</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">c</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">b</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">L</span>;
+        }
+    }
+}
+
+</code></pre></div><p>谓词用a、b、c三个变量组成，甚至可以把这三个变量隐藏到全局中定义，或者隐藏在某个数组中，让攻击者不能那么轻易找到。</p>
+<h3 id="脚本加壳">脚本加壳</h3>
+<p>将脚本进行编码，运行时 解码 再 eval 执行如：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">eval (<span style="color:#960050;background-color:#1e0010">…………………………</span>..<span style="color:#960050;background-color:#1e0010">……………</span>. <span style="color:#960050;background-color:#1e0010">……………</span>. <span style="color:#f92672">!</span><span style="color:#960050;background-color:#1e0010">@#</span><span style="color:#a6e22e">$</span><span style="color:#f92672">%^&amp;*</span> <span style="color:#960050;background-color:#1e0010">……………</span>. .<span style="color:#960050;background-color:#1e0010">…………………………</span>..<span style="color:#960050;background-color:#1e0010">……………</span>. )
+
+</code></pre></div><p>但是实际上这样意义并不大，因为攻击者只需要把alert或者console.log就原形毕露了</p>
+<p>改进方案：利用<code>Function / (function(){}).constructor</code>将代码当做字符串传入，然后执行，如下：</p>
+<pre><code class="language-jsp" data-lang="jsp">var code = 'console.log(&quot;hellow&quot;)';
+(new Function(code))();
+
+</code></pre><p>如上代码，可以对code进行加密混淆，例如<a href="http://utf-8.jp/public/aaencode.html">aaencode</a>，原理也是如此，我们举个例子</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">alert</span>(<span style="color:#e6db74">&#34;Hello, JavaScript&#34;</span>);
+
+</code></pre></div><p>利用aaencode混淆过后，代码如下：</p>
+<pre><code class="language-jsp" data-lang="jsp">ﾟωﾟﾉ= /｀ｍ´）ﾉ ~┻━┻   //*´∇｀*/ ['_']; o=(ﾟｰﾟ)  =_=3; c=(ﾟΘﾟ) =(ﾟｰﾟ)-(ﾟｰﾟ); (ﾟДﾟ) =(ﾟΘﾟ)= (o^_^o)/ (o^_^o);(ﾟДﾟ)={ﾟΘﾟ: '_' ,ﾟωﾟﾉ : ((ﾟωﾟﾉ==3) +'_') [ﾟΘﾟ] ,ﾟｰﾟﾉ :(ﾟωﾟﾉ+ '_')[o^_^o -(ﾟΘﾟ)] ,ﾟДﾟﾉ:((ﾟｰﾟ==3) +'_')[ﾟｰﾟ] }; (ﾟДﾟ) [ﾟΘﾟ] =((ﾟωﾟﾉ==3) +'_') [c^_^o];(ﾟДﾟ) ['c'] = ((ﾟДﾟ)+'_') [ (ﾟｰﾟ)+(ﾟｰﾟ)-(ﾟΘﾟ) ];(ﾟДﾟ) ['o'] = ((ﾟДﾟ)+'_') [ﾟΘﾟ];(ﾟoﾟ)=(ﾟДﾟ) ['c']+(ﾟДﾟ) ['o']+(ﾟωﾟﾉ +'_')[ﾟΘﾟ]+ ((ﾟωﾟﾉ==3) +'_') [ﾟｰﾟ] + ((ﾟДﾟ) +'_') [(ﾟｰﾟ)+(ﾟｰﾟ)]+ ((ﾟｰﾟ==3) +'_') [ﾟΘﾟ]+((ﾟｰﾟ==3) +'_') [(ﾟｰﾟ) - (ﾟΘﾟ)]+(ﾟДﾟ) ['c']+((ﾟДﾟ)+'_') [(ﾟｰﾟ)+(ﾟｰﾟ)]+ (ﾟДﾟ) ['o']+((ﾟｰﾟ==3) +'_') [ﾟΘﾟ];(ﾟДﾟ) ['_'] =(o^_^o) [ﾟoﾟ] [ﾟoﾟ];(ﾟεﾟ)=((ﾟｰﾟ==3) +'_') [ﾟΘﾟ]+ (ﾟДﾟ) .ﾟДﾟﾉ+((ﾟДﾟ)+'_') [(ﾟｰﾟ) + (ﾟｰﾟ)]+((ﾟｰﾟ==3) +'_') [o^_^o -ﾟΘﾟ]+((ﾟｰﾟ==3) +'_') [ﾟΘﾟ]+ (ﾟωﾟﾉ +'_') [ﾟΘﾟ]; (ﾟｰﾟ)+=(ﾟΘﾟ); (ﾟДﾟ)[ﾟεﾟ]='\\'; (ﾟДﾟ).ﾟΘﾟﾉ=(ﾟДﾟ+ ﾟｰﾟ)[o^_^o -(ﾟΘﾟ)];(oﾟｰﾟo)=(ﾟωﾟﾉ +'_')[c^_^o];(ﾟДﾟ) [ﾟoﾟ]='\&quot;';(ﾟДﾟ) ['_'] ( (ﾟДﾟ) ['_'] (ﾟεﾟ+(ﾟДﾟ)[ﾟoﾟ]+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ (ﾟΘﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ ((o^_^o) - (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+((ﾟｰﾟ) + (ﾟΘﾟ))+ (c^_^o)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟｰﾟ)+ ((o^_^o) - (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟΘﾟ)+ (c^_^o)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ ((ﾟｰﾟ) + (o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟｰﾟ)+ (c^_^o)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟΘﾟ)+ ((o^_^o) - (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ (ﾟΘﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ ((o^_^o) +(o^_^o))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ (ﾟΘﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) - (ﾟΘﾟ))+ (o^_^o)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ (ﾟｰﾟ)+ (o^_^o)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ ((o^_^o) - (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟΘﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ (c^_^o)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟΘﾟ)+ ((o^_^o) +(o^_^o))+ (ﾟｰﾟ)+ (ﾟДﾟ)[ﾟεﾟ]+(ﾟｰﾟ)+ ((o^_^o) - (ﾟΘﾟ))+ (ﾟДﾟ)[ﾟεﾟ]+((ﾟｰﾟ) + (ﾟΘﾟ))+ (ﾟΘﾟ)+ (ﾟДﾟ)[ﾟoﾟ]) (ﾟΘﾟ)) ('_');
+
+</code></pre><p>这段代码看起来很奇怪，不像是JavaScript代码，但是实际上这段代码是用一些看似表情的符号，声明了一个16位的数组（用来表示16进制位置），然后将code当做字符串遍历，把每个代码符号通过<code>string.charCodeAt</code>取这个16位的数组下标，拼接成代码。大概的意思就是把代码当做字符串，然后使用这些符号的拼接代替这一段代码（可以看到代码里有很多加号），最后，通过<code>(new Function(code))('_')</code>执行。</p>
+<p>仔细观察上面这一段代码，把代码最后的<code>('_')</code>去掉，在运行，你会直接看到源代码，然后<code>Function.constructor</code>存在<code>(ﾟДﾟ)</code>变量中，感兴趣的同学可以自行查看。</p>
+<p>除了aaencode，<a href="http://utf-8.jp/public/jjencode.html">jjencode</a>原理也是差不多，就不做解释了，其他更霸气的<a href="http://www.jsfuck.com/">jsfuck</a>，这些都是对代码进行加密的，这里就不详细介绍了。</p>
+<h2 id="反调试">反调试</h2>
+<p>由于JavaScript自带<code>debugger</code>语法，我们可以利用死循环性的<code>debugger</code>，当页面打开调试面板的时候，无限进入调试状态。</p>
+<h3 id="定时执行">定时执行</h3>
+<p>在代码开始执行的时候，使用<code>setInterval</code>定时触发我们的反调试函数。</p>
+<h3 id="随机执行">随机执行</h3>
+<p>在代码生成阶段，随机在部分函数体中注入我们的反调试函数，当代码执行到特定逻辑的时候，如果调试面板在打开状态，则无限进入调试状态。</p>
+<h2 id="内容监测">内容监测</h2>
+<p>由于我们的代码可能已经反调试了，攻击者可以会将代码拷贝到自己本地，然后修改，调试，执行，这个时候就需要添加一些检测进行判定，如果不是正常的环境执行，那让代码自行失败。</p>
+<h3 id="代码自检">代码自检</h3>
+<p>在代码生成的时候，为函数生成一份Hash，在代码执行之前，通过函数 toString 方法，检测代码是否被篡改</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">module</span>() {
+    <span style="color:#75715e">// 篡改校验
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">Hash</span>(<span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">toString</span>()) <span style="color:#f92672">!=</span> <span style="color:#e6db74">&#39;JkYxnHlxHbqKowiuy&#39;</span>) {
+        <span style="color:#75715e">// 代码被篡改！
+</span><span style="color:#75715e"></span>    }
+}
+
+</code></pre></div><h3 id="环境自检">环境自检</h3>
+<p>检查当前脚本的执行环境，例如当前的URL是否在允许的白名单内、当前环境是否正常的浏览器。</p>
+<p>如果为Nodejs环境，如果出现异常环境，甚至我们可以启动木马，长期跟踪。</p>
+<h2 id="废代码注入">废代码注入</h2>
+<p>插入一些永远不会发生的代码，让攻击者在分析代码的时候被这些无用的废代码混淆视听，增加阅读难度。</p>
+<h3 id="废逻辑注入">废逻辑注入</h3>
+<p>与废代码相对立的就是有用的代码，这些有用的代码代表着被执行代码的逻辑，这个时候我们可以收集这些逻辑，增加一段判定来决定执行真逻辑还是假逻辑，如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">(<span style="color:#66d9ef">function</span>(){
+    <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">true</span>) {
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">foo</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;abc&#39;</span>);
+        };
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">bar</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;def&#39;</span>);
+        };
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">baz</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;ghi&#39;</span>);
+        };
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">bark</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;jkl&#39;</span>);
+        };
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">hawk</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;mno&#39;</span>);
+        };
+ 
+        <span style="color:#a6e22e">foo</span>();
+        <span style="color:#a6e22e">bar</span>();
+        <span style="color:#a6e22e">baz</span>();
+        <span style="color:#a6e22e">bark</span>();
+        <span style="color:#a6e22e">hawk</span>();
+    }
+})();
+
+</code></pre></div><p>可以看到，所有的console.log都是我们的执行逻辑，这个时候可以收集所有的console.log，然后制造假判定来执行真逻辑代码，收集逻辑注入后如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">(<span style="color:#66d9ef">function</span>(){
+    <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">true</span>) {
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">foo</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#66d9ef">if</span> (<span style="color:#e6db74">&#39;aDas&#39;</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#39;aDas&#39;</span>) {
+                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;abc&#39;</span>);
+            } <span style="color:#66d9ef">else</span> {
+                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;def&#39;</span>);
+            }
+        };
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">bar</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#66d9ef">if</span> (<span style="color:#e6db74">&#39;Mfoi&#39;</span> <span style="color:#f92672">!==</span> <span style="color:#e6db74">&#39;daGs&#39;</span>) {
+                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;ghi&#39;</span>);
+            } <span style="color:#66d9ef">else</span> {
+                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;def&#39;</span>);
+            }
+        };
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">baz</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#66d9ef">if</span> (<span style="color:#e6db74">&#39;yuHo&#39;</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#39;yuHo&#39;</span>) {
+                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;ghi&#39;</span>);
+            } <span style="color:#66d9ef">else</span> {
+                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;abc&#39;</span>);
+            }
+        };
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">bark</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#66d9ef">if</span> (<span style="color:#e6db74">&#39;qu2o&#39;</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#39;qu2o&#39;</span>) {
+                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;jkl&#39;</span>);
+            } <span style="color:#66d9ef">else</span> {
+                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;mno&#39;</span>);
+            }
+        };
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">hawk</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#66d9ef">if</span> (<span style="color:#e6db74">&#39;qCuo&#39;</span> <span style="color:#f92672">!==</span> <span style="color:#e6db74">&#39;qcuo&#39;</span>) {
+                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;jkl&#39;</span>);
+            } <span style="color:#66d9ef">else</span> {
+                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;mno&#39;</span>);
+            }
+        };
+ 
+        <span style="color:#a6e22e">foo</span>();
+        <span style="color:#a6e22e">bar</span>();
+        <span style="color:#a6e22e">baz</span>();
+        <span style="color:#a6e22e">bark</span>();
+        <span style="color:#a6e22e">hawk</span>();
+    }
+})();
+
+</code></pre></div><p>判定逻辑中生成了一些字符串，在没有使用字符串提取的情况下，这是可以通过代码静态分析来得到真实的执行逻辑的，或者我们可以使用上文讲到的动态执行来决定执行真逻辑，可以看一下使用字符串提取和变量名编码后的效果，如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x6f5a</span> <span style="color:#f92672">=</span> [
+    <span style="color:#e6db74">&#39;abc&#39;</span>,
+    <span style="color:#e6db74">&#39;def&#39;</span>,
+    <span style="color:#e6db74">&#39;caela&#39;</span>,
+    <span style="color:#e6db74">&#39;hmexe&#39;</span>,
+    <span style="color:#e6db74">&#39;ghi&#39;</span>,
+    <span style="color:#e6db74">&#39;aaeem&#39;</span>,
+    <span style="color:#e6db74">&#39;maxex&#39;</span>,
+    <span style="color:#e6db74">&#39;mno&#39;</span>,
+    <span style="color:#e6db74">&#39;jkl&#39;</span>,
+    <span style="color:#e6db74">&#39;ladel&#39;</span>,
+    <span style="color:#e6db74">&#39;xchem&#39;</span>,
+    <span style="color:#e6db74">&#39;axdci&#39;</span>,
+    <span style="color:#e6db74">&#39;acaeh&#39;</span>,
+    <span style="color:#e6db74">&#39;log&#39;</span>
+];
+(<span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">_0x22c909</span>, <span style="color:#a6e22e">_0x4b3429</span>) {
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x1d4bab</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">_0x2e4228</span>) {
+        <span style="color:#66d9ef">while</span> (<span style="color:#f92672">--</span><span style="color:#a6e22e">_0x2e4228</span>) {
+            <span style="color:#a6e22e">_0x22c909</span>[<span style="color:#e6db74">&#39;push&#39;</span>](<span style="color:#a6e22e">_0x22c909</span>[<span style="color:#e6db74">&#39;shift&#39;</span>]());
+        }
+    };
+    <span style="color:#a6e22e">_0x1d4bab</span>(<span style="color:#f92672">++</span><span style="color:#a6e22e">_0x4b3429</span>);
+}(<span style="color:#a6e22e">_0x6f5a</span>, <span style="color:#ae81ff">0x13f</span>));
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x2386</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">_0x5db522</span>, <span style="color:#a6e22e">_0x143eaa</span>) {
+    <span style="color:#a6e22e">_0x5db522</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0x5db522</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">0x0</span>;
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x50b579</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_0x6f5a</span>[<span style="color:#a6e22e">_0x5db522</span>];
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">_0x50b579</span>;
+};
+(<span style="color:#66d9ef">function</span> () {
+    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!!</span>[]) {
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x38d12d</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x0&#39;</span>) <span style="color:#f92672">!==</span> <span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x1&#39;</span>)) {
+                <span style="color:#a6e22e">console</span>[<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x2&#39;</span>)](<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x3&#39;</span>));
+            } <span style="color:#66d9ef">else</span> {
+                <span style="color:#a6e22e">console</span>[<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x2&#39;</span>)](<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x4&#39;</span>));
+            }
+        };
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x128337</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x5&#39;</span>) <span style="color:#f92672">!==</span> <span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x6&#39;</span>)) {
+                <span style="color:#a6e22e">console</span>[<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x2&#39;</span>)](<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x4&#39;</span>));
+            } <span style="color:#66d9ef">else</span> {
+                <span style="color:#a6e22e">console</span>[<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x2&#39;</span>)](<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x7&#39;</span>));
+            }
+        };
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x55d92e</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x8&#39;</span>) <span style="color:#f92672">!==</span> <span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x8&#39;</span>)) {
+                <span style="color:#a6e22e">console</span>[<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x2&#39;</span>)](<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x3&#39;</span>));
+            } <span style="color:#66d9ef">else</span> {
+                <span style="color:#a6e22e">console</span>[<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x2&#39;</span>)](<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x7&#39;</span>));
+            }
+        };
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x3402dc</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x9&#39;</span>) <span style="color:#f92672">!==</span> <span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x9&#39;</span>)) {
+                <span style="color:#a6e22e">console</span>[<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x2&#39;</span>)](<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0xa&#39;</span>));
+            } <span style="color:#66d9ef">else</span> {
+                <span style="color:#a6e22e">console</span>[<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x2&#39;</span>)](<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0xb&#39;</span>));
+            }
+        };
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_0x28cfaa</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+            <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0xc&#39;</span>) <span style="color:#f92672">===</span> <span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0xd&#39;</span>)) {
+                <span style="color:#a6e22e">console</span>[<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x2&#39;</span>)](<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0xb&#39;</span>));
+            } <span style="color:#66d9ef">else</span> {
+                <span style="color:#a6e22e">console</span>[<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0x2&#39;</span>)](<span style="color:#a6e22e">_0x2386</span>(<span style="color:#e6db74">&#39;0xa&#39;</span>));
+            }
+        };
+        <span style="color:#a6e22e">_0x38d12d</span>();
+        <span style="color:#a6e22e">_0x128337</span>();
+        <span style="color:#a6e22e">_0x55d92e</span>();
+        <span style="color:#a6e22e">_0x3402dc</span>();
+        <span style="color:#a6e22e">_0x28cfaa</span>();
+    }
+}());
+
+</code></pre></div><h3 id="求值陷阱">求值陷阱</h3>
+<p>除了注入执行逻辑以外，还可以埋入一个隐蔽的陷阱，在一个<code>永不到达</code>且<code>无法静态分析</code>的分支里，引用该函数，正常用户不会执行，而 AST 遍历求值时，则会触发陷阱！陷阱能干啥呢？</p>
+<ul>
+<li>日志上报，及时了解情况</li>
+<li>在本地存储隐写特征，长期跟踪</li>
+<li>释放CSRF漏洞，获得破解者的详细信息</li>
+<li>开启自杀程序（页面崩溃、死循环、耗尽内存等）</li>
+</ul>
+<h3 id="加壳干扰">加壳干扰</h3>
+<p>在代码用eval包裹，然后对eval参数进行加密，并埋下陷阱，在解码时插入无用代码，干扰显示，大量换行、注释、字符串等大量特殊字符，导致显示卡顿。</p>
+<h2 id="结束">结束</h2>
+<p>大概我想到的混淆就包括这些，单个特性使用的话，混淆效果一般，各个特性组合起来用的话，最终效果很明显，当然这个看个人需求，毕竟混淆是个双刃剑，在增加了阅读难度的同时，也增大了脚本的体积，降低了代码的运行效率。</p>
+<h2 id="参考文献">参考文献</h2>
+<p>[代码混淆之道——控制流扁平与不透明谓词理论篇</p>
+
+    </div>
+
+    <div class="post-copyright">
+            
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rockwinder </span>
+                </p>
+            
+
+            
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://rockwinder.github.io/post/javascript_confusion_encrypt/>https://rockwinder.github.io/post/javascript_confusion_encrypt/</span>
+            </p>
+            
+            
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s):
+            
+            <span class="tag"><a href="https://rockwinder.github.io/tags/%E6%B7%B7%E6%B7%86/">
+                    #混淆</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> ·
+                <span><a href="https://rockwinder.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://rockwinder.github.io/post/why_redis_so_soft/" class="prev" rel="prev" title="Redis为什么这么快"><i class="iconfont icon-left"></i>&nbsp;Redis为什么这么快</a>
+        
+        
+    </div>
+
+    <div class="post-comment">
+        
+            
+                <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.css">
+<script src="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.min.js"></script>
+<script>
+    const gitalk = new Gitalk({
+
+        clientID: '',
+        clientSecret: '',
+        repo: '',
+        owner: '',
+        admin: [''],
+        id: location.pathname, 
+        distractionFreeMode: false 
+    });
+    (function () {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+            return;
+        }
+        gitalk.render('gitalk-container');
+    })();
+</script>
+
+            
+        
+    </div>
+</article>
+                </div>
+            </main>
+            <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2017 - 2020</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i>
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://rockwinder.github.io/">Rockwinder</a> | </span>
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/Mogeko/Mogege" target="_blank" rel="external nofollow">Mogege</a></span>
+    </div>
+</footer>
+
+
+
+
+
+>
+<script defer src="/js/vendor_main.min.js"></script>
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script> pangu.spacingPage();</script>
+
+
+
+
+
+        </div>
+    </body>
+</html>

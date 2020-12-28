@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Rockwinder`s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 31 Oct 2020 15:04:45 +0800</lastBuildDate><atom:link href="https://rockwinder.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 28 Dec 2020 11:22:23 +0800</lastBuildDate><atom:link href="https://rockwinder.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>JavaScript混淆安全加固</title>
+      <link>https://rockwinder.github.io/post/javascript_confusion_encrypt/</link>
+      <pubDate>Mon, 28 Dec 2020 11:22:23 +0800</pubDate>
+      
+      <guid>https://rockwinder.github.io/post/javascript_confusion_encrypt/</guid>
+      <description>前言 在安全攻防战场中，前端代码都是公开的，那么对前端进行加密有意义吗？可能大部分人的回答是，毫无意义，不要自创加密算法，直接用HTTPS吧。</description>
+    </item>
+    
     <item>
       <title>Redis为什么这么快</title>
       <link>https://rockwinder.github.io/post/why_redis_so_soft/</link>
