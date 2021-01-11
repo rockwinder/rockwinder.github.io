@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>js on Rockwinder`s Blog</title>
+    <link>https://rockwinder.github.io/categories/js/</link>
+    <description>Recent content in js on Rockwinder`s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 11 Jan 2021 16:11:51 +0800</lastBuildDate><atom:link href="https://rockwinder.github.io/categories/js/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>JavaScript: 实现简单的中文分词</title>
+      <link>https://rockwinder.github.io/post/javascript_participles/</link>
+      <pubDate>Mon, 11 Jan 2021 16:11:51 +0800</pubDate>
+      
+      <guid>https://rockwinder.github.io/post/javascript_participles/</guid>
+      <description>中文分词在大数据横行的今天是越来越有用武之地了。它不仅被广泛用于专业的中文搜索引擎中，而且在关键词屏蔽、黑白名单以及文本相似度等方面也能大显</description>
+    </item>
+    
+  </channel>
+</rss>

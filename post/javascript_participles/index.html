@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noodp"/>
+    <meta name="author" content="Rockwinder">
+    <meta name="description" content="Rockwinder 的个人博客">
+    
+    
+    <link rel="prev" href="https://rockwinder.github.io/post/javascript_confusion_encrypt/" />
+    
+    <link rel="canonical" href="https://rockwinder.github.io/post/javascript_participles/" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <title>
+        
+        
+            JavaScript: 实现简单的中文分词 | Rockwinder`s Blog
+        
+    </title>
+    <meta name="title" content="JavaScript: 实现简单的中文分词 | Rockwinder`s Blog">
+    
+<link rel="stylesheet" href="/css/main.min.css">
+
+
+    
+    
+ 
+
+<script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https:\/\/rockwinder.github.io\/"
+    },
+    "articleSection" : "post",
+    "name" : "JavaScript: 实现简单的中文分词",
+    "headline" : "JavaScript: 实现简单的中文分词",
+    "description" : "中文分词在大数据横行的今天是越来越有用武之地了。它不仅被广泛用于专业的中文搜索引擎中，而且在关键词屏蔽、黑白名单以及文本相似度等方面也能大显",
+    "inLanguage" : "zh-cn",
+    "author" : "Rockwinder",
+    "creator" : "Rockwinder",
+    "publisher": "Rockwinder",
+    "accountablePerson" : "Rockwinder",
+    "copyrightHolder" : "Rockwinder",
+    "copyrightYear" : "2021",
+    "datePublished": "2021-01-11 16:11:51 \u002b0800 CST",
+    "dateModified" : "2021-01-11 16:11:51 \u002b0800 CST",
+    "url" : "https:\/\/rockwinder.github.io\/post\/javascript_participles\/",
+    "wordCount" : "4356",
+    "keywords" : [  "Rockwinder`s Blog"]
+}
+</script>
+
+  </head>
+    <body class="">
+        <div class="wrapper">
+            <nav class="navbar">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+    <div class="container">
+        
+            <div class="navbar-header header-back2home-logo">
+                <span class="logo_mark" >>$</span>
+                <a href="https://rockwinder.github.io/">
+                    <span class="logo_text" >cd /home/</span>
+                    <span class="logo_cursor" ></span>
+                </a>
+            </div>
+        
+        <div class="navbar-right">
+                
+                <span class="menu">
+                
+                <a class="menu-item" href="/post/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+                <span class="divide"></span>
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a>
+                </span>
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+     <div class="container">
+        <div class="navbar">
+            <div class="navbar-header header-logo">
+                    <a href="https://rockwinder.github.io/">Rockwinder`s Blog</a>
+            </div>
+            <div class="navbar-right">
+                <div><a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a></div>
+                <div class="menu-toggle">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                <nav class="mb-md">
+                    
+                    
+                        <a class="menu-item" href="/post/" title="">
+                            <h3>Blog</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/categories/" title="">
+                            <h3>Categories</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/tags/" title="">
+                            <h3>Tags</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/about/" title="">
+                            <h3>About</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                </nav>
+        </div>
+    </div>
+</nav>
+            <main class="main">
+                <div class="container">
+                    
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">JavaScript: 实现简单的中文分词</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://rockwinder.github.io/" rel="author">Rockwinder</a> with ♥
+                <span class="post-time">
+                on <time datetime=2021-01-11 itemprop="datePublished">January 11, 2021</time>
+                </span>
+                in
+                
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        
+                        
+                        
+                          <a href="https://rockwinder.github.io/categories/js/"> js, </a>
+                        
+                        
+                </span>
+                <span class="post-word-count">4356 words</span>
+        </div>
+    </header>
+
+    <div class="post-content">
+        
+
+        
+        
+            
+        
+
+        
+        
+        
+        
+        
+
+        
+        
+        
+
+        <p>中文分词在大数据横行的今天是越来越有用武之地了。它不仅被广泛用于专业的中文搜索引擎中，而且在关键词屏蔽、黑白名单以及文本相似度等方面也能大显身手。中文分词最简单也最常用的方式是基于字典查找的方式，通过遍历待分词字符串并在字典中进行查找匹配以达到分词的目的。本文即是采用这种方式。</p>
+<h2 id="字典">字典</h2>
+<p>在本文中，完全依赖于字典，因此需要准备好字典。一般面对不同的领域用不同的字典。比如面向医学的，则字典会添加许多医学术语方面的词。可以很容易的找到常用词的字典，比如搜狗输入法自带的字典等。</p>
+<h2 id="停止词">停止词</h2>
+<p>停止词不能用于成词。停止词主要包括无意义的字符(如的、地、得)或词。</p>
+<h2 id="常规实现">常规实现</h2>
+<p>本文由于只是简单的介绍和实现，所以定义好了简单的字典和停止词，如下代码所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;!</span><span style="color:#a6e22e">DOCTYPE</span> <span style="color:#a6e22e">html</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">html</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">head</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">title</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">简单的中文分词</span><span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/title&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;author&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">http</span><span style="color:#f92672">-</span><span style="color:#a6e22e">equiv</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;X-UA-Compatible&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;IE=7&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;keywords&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;简单的中文分词&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;description&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;简单的中文分词&#34;</span> <span style="color:#f92672">/&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/head&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">body</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text/javascript&#34;</span><span style="color:#f92672">&gt;</span>
+<span style="color:#75715e">// 字典
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dict</span>  <span style="color:#f92672">=</span> {
+	<span style="color:#e6db74">&#34;家乡&#34;</span>     <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+	<span style="color:#e6db74">&#34;松花&#34;</span>     <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+	<span style="color:#e6db74">&#34;松花江&#34;</span>   <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+	<span style="color:#e6db74">&#34;那里&#34;</span>     <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+	<span style="color:#e6db74">&#34;四季&#34;</span>     <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+	<span style="color:#e6db74">&#34;四季迷人&#34;</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+	<span style="color:#e6db74">&#34;迷人&#34;</span>     <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+	<span style="color:#e6db74">&#34;花香&#34;</span>     <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>
+};
+<span style="color:#75715e">// 停止词
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">stop</span>  <span style="color:#f92672">=</span> {
+	<span style="color:#e6db74">&#34;的&#34;</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>
+};
+<span style="color:#75715e">// 待分词的字符串
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">words</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;我的家乡在松花江边上，那里有四季迷人的花香。&#34;</span>;
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/body&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/html&gt;</span>
+</code></pre></div><p>dict和stop之所以定义为Object，是因为这样可令查找的时间复杂度为常值O(1)。分词的过程有点像正则表达式的惰性匹配。先从words中读取第一个字符&quot;我&quot;并在dict中和stop中查找，如果是停止词，则丢掉已读取的，然后读取第二个字&quot;的&quot;。如果在dict中，则添加到结果集，然后继续读到下一个，再同样去stop和dict中查找，直到处理完成。代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;!</span><span style="color:#a6e22e">DOCTYPE</span> <span style="color:#a6e22e">html</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">html</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">head</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">title</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">简单的中文分词</span><span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/title&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;author&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">http</span><span style="color:#f92672">-</span><span style="color:#a6e22e">equiv</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;X-UA-Compatible&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;IE=7&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;keywords&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;简单的中文分词&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;description&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;简单的中文分词&#34;</span> <span style="color:#f92672">/&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/head&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">body</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text/javascript&#34;</span><span style="color:#f92672">&gt;</span>
+<span style="color:#75715e">// 字典
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dict</span>  <span style="color:#f92672">=</span> {
+	<span style="color:#e6db74">&#34;家乡&#34;</span>     <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+	<span style="color:#e6db74">&#34;松花&#34;</span>     <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+	<span style="color:#e6db74">&#34;松花江&#34;</span>   <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+	<span style="color:#e6db74">&#34;那里&#34;</span>     <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+	<span style="color:#e6db74">&#34;四季&#34;</span>     <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+	<span style="color:#e6db74">&#34;四季迷人&#34;</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+	<span style="color:#e6db74">&#34;迷人&#34;</span>     <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+	<span style="color:#e6db74">&#34;花香&#34;</span>     <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>
+};
+<span style="color:#75715e">// 停止词
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">stop</span>  <span style="color:#f92672">=</span> {
+	<span style="color:#e6db74">&#34;的&#34;</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>
+};
+<span style="color:#75715e">// 待分词的字符串
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">words</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;我的家乡在松花江边上，那里有四季迷人的花香。&#34;</span>;
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">splitWords</span>(<span style="color:#a6e22e">words</span>) {
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">start</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">end</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">words</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>, <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> [];
+	<span style="color:#66d9ef">while</span> (<span style="color:#a6e22e">start</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">end</span>) {
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">str</span> <span style="color:#f92672">=</span> [];
+		<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">start</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;=</span> <span style="color:#a6e22e">end</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+			<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">s</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">words</span>.<span style="color:#a6e22e">substring</span>(<span style="color:#a6e22e">i</span>, <span style="color:#a6e22e">i</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+			<span style="color:#75715e">// 如果是停止词，则跳过
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">s</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">stop</span>) {
+				<span style="color:#66d9ef">break</span>;
+			}
+			<span style="color:#a6e22e">str</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">s</span>);
+			<span style="color:#75715e">// 如果在字典中，则添加到分词结果集
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">str</span>.<span style="color:#a6e22e">join</span>(<span style="color:#e6db74">&#39;&#39;</span>) <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">dict</span>) {
+				<span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">str</span>.<span style="color:#a6e22e">join</span>(<span style="color:#e6db74">&#39;&#39;</span>));
+			}
+		}
+
+		<span style="color:#a6e22e">start</span><span style="color:#f92672">++</span>;
+	}
+
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>;
+}
+
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">group</span>(<span style="color:#e6db74">&#34;Base 分词: &#34;</span>);
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;待分词的字符串: &#34;</span>, <span style="color:#a6e22e">words</span>);
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;分词结果:       &#34;</span>, <span style="color:#a6e22e">splitWords</span>(<span style="color:#a6e22e">words</span>));
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">groupEnd</span>();
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/body&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/html&gt;</span>
+</code></pre></div><p><img src="http://static.oschina.net/uploads/space/2014/0220/202951_6teP_182025.jpg" alt="img" loading="lazy" ></p>
+<h2 id="trie树实现">Trie树实现</h2>
+<p>但是想一下，在实际应用中，字典可能包含了足够多的词，而且字典中很多词是有共同前缀的。比如上述代码中的&quot;松花&quot;和&quot;松花江&quot;就有共同的前缀&quot;松花&quot;，存储重复的前缀将导致字典占用大量的内存，而这部分其实是可以优化的。还记得我之前的一篇介绍Trie树的文章吗？如果您忘了，那请看：<a href="http://my.oschina.net/goal/blog/200596">Python: Trie树实现字典排序</a> 。事实上还是有不同之处的，因为之前只是针对26个字母的Trie树。对于需要支持中文的Trie树来说，如果直接用一个字符(这个字符可能是ASCII码字符，也可能是中文字符或其它多字节字符)来表示一个节点，则是不可取的。大家知道最常用的汉字有将近一万个，如果每一个节点都要用一个数组来保存将近一万个子节点，那就太吓人了。所以我这里选择Object的方式来保存，这样的好处是查找时间复杂度为O(1)。但即使这样，这个Object还将容纳将近一万个key，所以我这里将结合另外一种方案来实现。</p>
+<p>JavaScript的内码是Unicode，它用1~2个字节来存储。如果我们将一个双字节转成UTF8的三个字节(嗯，是的。本文只考虑UTF8的单字节和三字节，因为双字节、四字节、五字节和六字节太少见了)，单字节还是不变，以第一个字节为起始节点，那么节点的子节点数就变成了固定的256个，然后我们通过起始字节的大小可以知道这是一个单字节或三字节。这种方式有效的节约了内存。接下来是实现代码：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;!</span><span style="color:#a6e22e">DOCTYPE</span> <span style="color:#a6e22e">html</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">html</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">head</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">title</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">简单的中文分词</span><span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/title&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;author&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">http</span><span style="color:#f92672">-</span><span style="color:#a6e22e">equiv</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;X-UA-Compatible&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;IE=7&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;keywords&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;简单的中文分词&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;description&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;简单的中文分词&#34;</span> <span style="color:#f92672">/&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/head&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">body</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text/javascript&#34;</span><span style="color:#f92672">&gt;</span>
+<span style="color:#75715e">// 字典
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dict</span>  <span style="color:#f92672">=</span> [
+	<span style="color:#e6db74">&#34;家乡&#34;</span>,
+	<span style="color:#e6db74">&#34;松花&#34;</span>,
+	<span style="color:#e6db74">&#34;松花江&#34;</span>,
+	<span style="color:#e6db74">&#34;那里&#34;</span>,
+	<span style="color:#e6db74">&#34;四季&#34;</span>,
+	<span style="color:#e6db74">&#34;四季迷人&#34;</span>,
+	<span style="color:#e6db74">&#34;迷人&#34;</span>,
+	<span style="color:#e6db74">&#34;花香&#34;</span>,
+	<span style="color:#e6db74">&#34;hello&#34;</span>,
+	<span style="color:#e6db74">&#34;kitty&#34;</span>,
+	<span style="color:#e6db74">&#34;fine&#34;</span>
+];
+<span style="color:#75715e">// 停止词
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">stop</span>  <span style="color:#f92672">=</span> {
+	<span style="color:#e6db74">&#34;的&#34;</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>
+};
+<span style="color:#75715e">// 待分词的字符串
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">words</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hello, kitty!我的家乡在松花江边上，那里有四季迷人的花香。fine~&#34;</span>;
+
+<span style="color:#75715e">// Trie树
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">Trie</span>() {
+	<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">root</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Node</span>(<span style="color:#66d9ef">null</span>);
+}
+<span style="color:#a6e22e">Trie</span>.<span style="color:#a6e22e">prototype</span> <span style="color:#f92672">=</span> {
+	<span style="color:#75715e">/**
+</span><span style="color:#75715e">	* 将Unicode转成UTF8的三字节
+</span><span style="color:#75715e">	*/</span>
+	<span style="color:#a6e22e">toBytes</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">word</span>) {
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> [];
+		<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">word</span>.<span style="color:#a6e22e">length</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+			<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">code</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">word</span>.<span style="color:#a6e22e">charCodeAt</span>(<span style="color:#a6e22e">i</span>);
+			<span style="color:#75715e">// 单字节
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">code</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0x80</span>) {
+				<span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">code</span>);
+			} <span style="color:#66d9ef">else</span> {
+				<span style="color:#75715e">// 三字节
+</span><span style="color:#75715e"></span>				<span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">concat</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">toUTF8</span>(<span style="color:#a6e22e">code</span>));
+			}
+		}
+
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>;
+	},
+	<span style="color:#a6e22e">toUTF8</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">c</span>) {
+		<span style="color:#75715e">// 1110xxxx 10xxxxxx 10xxxxxx
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">// 1110xxxx
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">byte1</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0xE0</span> <span style="color:#f92672">|</span> ((<span style="color:#a6e22e">c</span> <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">12</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x0F</span>);
+		<span style="color:#75715e">// 10xxxxxx
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">byte2</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x80</span> <span style="color:#f92672">|</span> ((<span style="color:#a6e22e">c</span> <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">6</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x3F</span>);
+		<span style="color:#75715e">// 10xxxxxx
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">byte3</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x80</span> <span style="color:#f92672">|</span> (<span style="color:#a6e22e">c</span> <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x3F</span>);
+
+		<span style="color:#66d9ef">return</span> [<span style="color:#a6e22e">byte1</span>, <span style="color:#a6e22e">byte2</span>, <span style="color:#a6e22e">byte3</span>];
+	},
+	<span style="color:#a6e22e">toUTF16</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">b1</span>, <span style="color:#a6e22e">b2</span>, <span style="color:#a6e22e">b3</span>) {
+		<span style="color:#75715e">// 1110xxxx 10xxxxxx 10xxxxxx
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">byte1</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">b1</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">4</span>) <span style="color:#f92672">|</span> ((<span style="color:#a6e22e">b2</span> <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x0F</span>);
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">byte2</span> <span style="color:#f92672">=</span> ((<span style="color:#a6e22e">b2</span> <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x03</span>) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">6</span>) <span style="color:#f92672">|</span> (<span style="color:#a6e22e">b3</span> <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x3F</span>);
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">utf16</span> <span style="color:#f92672">=</span> ((<span style="color:#a6e22e">byte1</span> <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x00FF</span>) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">8</span>) <span style="color:#f92672">|</span> <span style="color:#a6e22e">byte2</span>
+
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">utf16</span>;
+	},
+	<span style="color:#75715e">/**
+</span><span style="color:#75715e">	* 添加每个词到Trie树
+</span><span style="color:#75715e">	*/</span>
+	<span style="color:#a6e22e">add</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">word</span>) {
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">node</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">root</span>, <span style="color:#a6e22e">bytes</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">toBytes</span>(<span style="color:#a6e22e">word</span>), <span style="color:#a6e22e">len</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">length</span>;
+		<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">len</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+			<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">c</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>[<span style="color:#a6e22e">i</span>];
+			<span style="color:#75715e">// 如果不存在则添加，否则不需要再保存了，因为共用前缀
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>(<span style="color:#a6e22e">c</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">childs</span>)) {
+				<span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">childs</span>[<span style="color:#a6e22e">c</span>] <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Node</span>(<span style="color:#a6e22e">c</span>);
+			}
+			<span style="color:#a6e22e">node</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">childs</span>[<span style="color:#a6e22e">c</span>];
+		}
+		<span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">asWord</span>(); <span style="color:#75715e">// 成词边界
+</span><span style="color:#75715e"></span>	},
+	<span style="color:#75715e">/**
+</span><span style="color:#75715e">	* 按字节在Trie树中搜索
+</span><span style="color:#75715e">	*/</span>
+	<span style="color:#a6e22e">search</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">bytes</span>) {
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">node</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">root</span>, <span style="color:#a6e22e">len</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">length</span>, <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> [];
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">word</span> <span style="color:#f92672">=</span> [], <span style="color:#a6e22e">j</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+		<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">len</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+			<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">c</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>[<span style="color:#a6e22e">i</span>], <span style="color:#a6e22e">childs</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">childs</span>;
+			<span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>(<span style="color:#a6e22e">c</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">childs</span>)) {
+				<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>;
+			}
+
+			<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">c</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0x80</span>) {
+				<span style="color:#a6e22e">word</span>.<span style="color:#a6e22e">push</span>(String.<span style="color:#a6e22e">fromCharCode</span>(<span style="color:#a6e22e">c</span>));
+			} <span style="color:#66d9ef">else</span> {
+				<span style="color:#a6e22e">j</span><span style="color:#f92672">++</span>;
+				<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">j</span> <span style="color:#f92672">%</span> <span style="color:#ae81ff">3</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+					<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b1</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>[<span style="color:#a6e22e">i</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>];
+					<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b2</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>[<span style="color:#a6e22e">i</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>];
+					<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b3</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">c</span>;
+					<span style="color:#a6e22e">word</span>.<span style="color:#a6e22e">push</span>(String.<span style="color:#a6e22e">fromCharCode</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">toUTF16</span>(<span style="color:#a6e22e">b1</span>, <span style="color:#a6e22e">b2</span>, <span style="color:#a6e22e">b3</span>)));
+				}
+			}
+			<span style="color:#75715e">// 如果是停止词，则退出
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">word</span>.<span style="color:#a6e22e">join</span>(<span style="color:#e6db74">&#39;&#39;</span>) <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">stop</span>) {
+				<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>;
+			}
+
+			<span style="color:#75715e">// 成词
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">cnode</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">childs</span>[<span style="color:#a6e22e">c</span>];
+			<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">cnode</span>.<span style="color:#a6e22e">isWord</span>()) {
+				<span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">word</span>.<span style="color:#a6e22e">join</span>(<span style="color:#e6db74">&#39;&#39;</span>));
+			}
+
+			<span style="color:#a6e22e">node</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">cnode</span>;
+		}
+
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>;
+	},
+	<span style="color:#75715e">/**
+</span><span style="color:#75715e">	* 分词
+</span><span style="color:#75715e">	*/</span>
+	<span style="color:#a6e22e">splitWords</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">words</span>) {
+		<span style="color:#75715e">// 转换成单字节进行搜索
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">bytes</span>  <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">toBytes</span>(<span style="color:#a6e22e">words</span>);
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">start</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">end</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>, <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> [];
+
+		<span style="color:#66d9ef">while</span> (<span style="color:#a6e22e">start</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">end</span>) {
+			<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">word</span> <span style="color:#f92672">=</span> [];
+			<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">start</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;=</span> <span style="color:#a6e22e">end</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+				<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>[<span style="color:#a6e22e">i</span>]; <span style="color:#75715e">// 逐个取出字节
+</span><span style="color:#75715e"></span>				<span style="color:#a6e22e">word</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">b</span>);
+				
+				<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">finds</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">search</span>(<span style="color:#a6e22e">word</span>);
+				<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">finds</span> <span style="color:#f92672">!==</span> <span style="color:#66d9ef">false</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">finds</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) {
+					<span style="color:#75715e">// 如果在字典中，则添加到分词结果集
+</span><span style="color:#75715e"></span>					<span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">concat</span>(<span style="color:#a6e22e">finds</span>);
+					<span style="color:#66d9ef">break</span>;
+				}
+			}
+
+			<span style="color:#a6e22e">start</span><span style="color:#f92672">++</span>;
+		}
+
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>;
+	},
+	<span style="color:#75715e">/**
+</span><span style="color:#75715e">	* 词始化整棵Trie树
+</span><span style="color:#75715e">	*/</span>
+	<span style="color:#a6e22e">init</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">dict</span>) {
+		<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">dict</span>.<span style="color:#a6e22e">length</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+			<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">add</span>(<span style="color:#a6e22e">dict</span>[<span style="color:#a6e22e">i</span>]);
+		}
+	}
+};
+
+<span style="color:#75715e">// 节点
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">Node</span>(<span style="color:#a6e22e">_byte</span>) {
+	<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">childs</span>   <span style="color:#f92672">=</span> {}; <span style="color:#75715e">// 子节点集合
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">_byte</span>    <span style="color:#f92672">=</span> <span style="color:#a6e22e">_byte</span> <span style="color:#f92672">||</span> <span style="color:#66d9ef">null</span>; <span style="color:#75715e">// 此节点上存储的字节
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">_isWord</span>  <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>; <span style="color:#75715e">// 边界保存，表示是否可以组成一个词
+</span><span style="color:#75715e"></span>}
+<span style="color:#a6e22e">Node</span>.<span style="color:#a6e22e">prototype</span> <span style="color:#f92672">=</span> {
+	<span style="color:#a6e22e">isWord</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>() {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">_isWord</span>;
+	},
+	<span style="color:#a6e22e">asWord</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>() {
+		<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">_isWord</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>;
+	}
+};
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">trie</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Trie</span>();
+<span style="color:#a6e22e">trie</span>.<span style="color:#a6e22e">init</span>(<span style="color:#a6e22e">dict</span>);
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">trie</span>.<span style="color:#a6e22e">splitWords</span>(<span style="color:#a6e22e">words</span>);
+
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">group</span>(<span style="color:#e6db74">&#34;Trie 分词: &#34;</span>);
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;待分词的字符串: &#34;</span>, <span style="color:#a6e22e">words</span>);
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;分词结果:       &#34;</span>, <span style="color:#a6e22e">result</span>);
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">groupEnd</span>();
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/body&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/html&gt;</span>
+</code></pre></div><p><img src="http://static.oschina.net/uploads/space/2014/0221/011115_Towz_182025.jpg" alt="img" loading="lazy" ></p>
+<p>各位看了输出结果后就会发现，这个分词是有问题的，因为明显少了&quot;松花江&quot;和&quot;四季迷人&quot;。拿&quot;四季&quot;和&quot;四季迷人&quot;来说，&ldquo;四季&quot;是&quot;四季迷人&quot;的前缀，在通过trie.isWrod()方法来判断是否成词时，一遇到&quot;四季&quot;就成功了，所以&quot;四季迷人&quot;没有机会得到判断，所以我们需要修改代码，在Node上加一个属性，表示已判断的次数。代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;!</span><span style="color:#a6e22e">DOCTYPE</span> <span style="color:#a6e22e">html</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">html</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">head</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">title</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">简单的中文分词</span><span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/title&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;author&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">http</span><span style="color:#f92672">-</span><span style="color:#a6e22e">equiv</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;X-UA-Compatible&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;IE=7&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;keywords&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;简单的中文分词&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;description&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;简单的中文分词&#34;</span> <span style="color:#f92672">/&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/head&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">body</span><span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text/javascript&#34;</span><span style="color:#f92672">&gt;</span>
+<span style="color:#75715e">// 字典
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dict</span>  <span style="color:#f92672">=</span> [
+	<span style="color:#e6db74">&#34;家乡&#34;</span>,
+	<span style="color:#e6db74">&#34;松花&#34;</span>,
+	<span style="color:#e6db74">&#34;松花江&#34;</span>,
+	<span style="color:#e6db74">&#34;那里&#34;</span>,
+	<span style="color:#e6db74">&#34;四季&#34;</span>,
+	<span style="color:#e6db74">&#34;四季迷人&#34;</span>,
+	<span style="color:#e6db74">&#34;迷人&#34;</span>,
+	<span style="color:#e6db74">&#34;花香&#34;</span>,
+	<span style="color:#e6db74">&#34;hello&#34;</span>,
+	<span style="color:#e6db74">&#34;kitty&#34;</span>,
+	<span style="color:#e6db74">&#34;fine&#34;</span>
+];
+<span style="color:#75715e">// 停止词
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">stop</span>  <span style="color:#f92672">=</span> {
+	<span style="color:#e6db74">&#34;的&#34;</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>
+};
+<span style="color:#75715e">// 待分词的字符串
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">words</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hello, kitty!我的家乡在松花江边上，那里有四季迷人的花香。fine~&#34;</span>;
+
+<span style="color:#75715e">// Trie树
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">Trie</span>() {
+	<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">root</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Node</span>(<span style="color:#66d9ef">null</span>);
+}
+<span style="color:#a6e22e">Trie</span>.<span style="color:#a6e22e">prototype</span> <span style="color:#f92672">=</span> {
+	<span style="color:#75715e">/**
+</span><span style="color:#75715e">	* 将Unicode转成UTF8的三字节
+</span><span style="color:#75715e">	*/</span>
+	<span style="color:#a6e22e">toBytes</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">word</span>) {
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> [];
+		<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">word</span>.<span style="color:#a6e22e">length</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+			<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">code</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">word</span>.<span style="color:#a6e22e">charCodeAt</span>(<span style="color:#a6e22e">i</span>);
+			<span style="color:#75715e">// 单字节
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">code</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0x80</span>) {
+				<span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">code</span>);
+			} <span style="color:#66d9ef">else</span> {
+				<span style="color:#75715e">// 三字节
+</span><span style="color:#75715e"></span>				<span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">concat</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">toUTF8</span>(<span style="color:#a6e22e">code</span>));
+			}
+		}
+
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>;
+	},
+	<span style="color:#a6e22e">toUTF8</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">c</span>) {
+		<span style="color:#75715e">// 1110xxxx 10xxxxxx 10xxxxxx
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">// 1110xxxx
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">byte1</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0xE0</span> <span style="color:#f92672">|</span> ((<span style="color:#a6e22e">c</span> <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">12</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x0F</span>);
+		<span style="color:#75715e">// 10xxxxxx
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">byte2</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x80</span> <span style="color:#f92672">|</span> ((<span style="color:#a6e22e">c</span> <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">6</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x3F</span>);
+		<span style="color:#75715e">// 10xxxxxx
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">byte3</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x80</span> <span style="color:#f92672">|</span> (<span style="color:#a6e22e">c</span> <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x3F</span>);
+
+		<span style="color:#66d9ef">return</span> [<span style="color:#a6e22e">byte1</span>, <span style="color:#a6e22e">byte2</span>, <span style="color:#a6e22e">byte3</span>];
+	},
+	<span style="color:#a6e22e">toUTF16</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">b1</span>, <span style="color:#a6e22e">b2</span>, <span style="color:#a6e22e">b3</span>) {
+		<span style="color:#75715e">// 1110xxxx 10xxxxxx 10xxxxxx
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">byte1</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">b1</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">4</span>) <span style="color:#f92672">|</span> ((<span style="color:#a6e22e">b2</span> <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x0F</span>);
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">byte2</span> <span style="color:#f92672">=</span> ((<span style="color:#a6e22e">b2</span> <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x03</span>) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">6</span>) <span style="color:#f92672">|</span> (<span style="color:#a6e22e">b3</span> <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x3F</span>);
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">utf16</span> <span style="color:#f92672">=</span> ((<span style="color:#a6e22e">byte1</span> <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x00FF</span>) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">8</span>) <span style="color:#f92672">|</span> <span style="color:#a6e22e">byte2</span>
+
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">utf16</span>;
+	},
+	<span style="color:#75715e">/**
+</span><span style="color:#75715e">	* 添加每个词到Trie树
+</span><span style="color:#75715e">	*/</span>
+	<span style="color:#a6e22e">add</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">word</span>) {
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">node</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">root</span>, <span style="color:#a6e22e">bytes</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">toBytes</span>(<span style="color:#a6e22e">word</span>), <span style="color:#a6e22e">len</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">length</span>;
+		<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">len</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+			<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">c</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>[<span style="color:#a6e22e">i</span>];
+			<span style="color:#75715e">// 如果不存在则添加，否则不需要再保存了，因为共用前缀
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>(<span style="color:#a6e22e">c</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">childs</span>)) {
+				<span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">childs</span>[<span style="color:#a6e22e">c</span>] <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Node</span>(<span style="color:#a6e22e">c</span>);
+			}
+			<span style="color:#a6e22e">node</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">childs</span>[<span style="color:#a6e22e">c</span>];
+		}
+		<span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">asWord</span>(); <span style="color:#75715e">// 成词边界
+</span><span style="color:#75715e"></span>	},
+	<span style="color:#75715e">/**
+</span><span style="color:#75715e">	* 按字节在Trie树中搜索
+</span><span style="color:#75715e">	*/</span>
+	<span style="color:#a6e22e">search</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">bytes</span>) {
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">node</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">root</span>, <span style="color:#a6e22e">len</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">length</span>, <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> [];
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">word</span> <span style="color:#f92672">=</span> [], <span style="color:#a6e22e">j</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+		<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">len</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+			<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">c</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>[<span style="color:#a6e22e">i</span>], <span style="color:#a6e22e">childs</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">childs</span>;
+			<span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>(<span style="color:#a6e22e">c</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">childs</span>)) {
+				<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>;
+			}
+
+			<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">c</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0x80</span>) {
+				<span style="color:#a6e22e">word</span>.<span style="color:#a6e22e">push</span>(String.<span style="color:#a6e22e">fromCharCode</span>(<span style="color:#a6e22e">c</span>));
+			} <span style="color:#66d9ef">else</span> {
+				<span style="color:#a6e22e">j</span><span style="color:#f92672">++</span>;
+				<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">j</span> <span style="color:#f92672">%</span> <span style="color:#ae81ff">3</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+					<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b1</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>[<span style="color:#a6e22e">i</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>];
+					<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b2</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>[<span style="color:#a6e22e">i</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>];
+					<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b3</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">c</span>;
+					<span style="color:#a6e22e">word</span>.<span style="color:#a6e22e">push</span>(String.<span style="color:#a6e22e">fromCharCode</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">toUTF16</span>(<span style="color:#a6e22e">b1</span>, <span style="color:#a6e22e">b2</span>, <span style="color:#a6e22e">b3</span>)));
+				}
+			}
+			<span style="color:#75715e">// 如果是停止词，则退出
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">word</span>.<span style="color:#a6e22e">join</span>(<span style="color:#e6db74">&#39;&#39;</span>) <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">stop</span>) {
+				<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>;
+			}
+
+			<span style="color:#75715e">// 成词
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">cnode</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">childs</span>[<span style="color:#a6e22e">c</span>];
+			<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">cnode</span>.<span style="color:#a6e22e">isWord</span>()) {
+				<span style="color:#a6e22e">cnode</span>.<span style="color:#a6e22e">addCount</span>(); <span style="color:#75715e">// 用于计数判断
+</span><span style="color:#75715e"></span>				<span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">word</span>.<span style="color:#a6e22e">join</span>(<span style="color:#e6db74">&#39;&#39;</span>));
+			}
+
+			<span style="color:#a6e22e">node</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">cnode</span>;
+		}
+
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>;
+	},
+	<span style="color:#75715e">/**
+</span><span style="color:#75715e">	* 分词
+</span><span style="color:#75715e">	*/</span>
+	<span style="color:#a6e22e">splitWords</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">words</span>) {
+		<span style="color:#75715e">// 转换成单字节进行搜索
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">bytes</span>  <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">toBytes</span>(<span style="color:#a6e22e">words</span>);
+		<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">start</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">end</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>, <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> [];
+
+		<span style="color:#66d9ef">while</span> (<span style="color:#a6e22e">start</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">end</span>) {
+			<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">word</span> <span style="color:#f92672">=</span> [];
+			<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">start</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;=</span> <span style="color:#a6e22e">end</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+				<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">bytes</span>[<span style="color:#a6e22e">i</span>]; <span style="color:#75715e">// 逐个取出字节
+</span><span style="color:#75715e"></span>				<span style="color:#a6e22e">word</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">b</span>);
+				
+				<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">finds</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">search</span>(<span style="color:#a6e22e">word</span>);
+				<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">finds</span> <span style="color:#f92672">!==</span> <span style="color:#66d9ef">false</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">finds</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) {
+					<span style="color:#75715e">// 如果在字典中，则添加到分词结果集
+</span><span style="color:#75715e"></span>					<span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">concat</span>(<span style="color:#a6e22e">finds</span>);
+				}
+			}
+
+			<span style="color:#a6e22e">start</span><span style="color:#f92672">++</span>;
+		}
+
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>;
+	},
+	<span style="color:#75715e">/**
+</span><span style="color:#75715e">	* 词始化整棵Trie树
+</span><span style="color:#75715e">	*/</span>
+	<span style="color:#a6e22e">init</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">dict</span>) {
+		<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">dict</span>.<span style="color:#a6e22e">length</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+			<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">add</span>(<span style="color:#a6e22e">dict</span>[<span style="color:#a6e22e">i</span>]);
+		}
+	}
+};
+
+<span style="color:#75715e">// 节点
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">Node</span>(<span style="color:#a6e22e">_byte</span>) {
+	<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">childs</span>   <span style="color:#f92672">=</span> {}; <span style="color:#75715e">// 子节点集合
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">_byte</span>    <span style="color:#f92672">=</span> <span style="color:#a6e22e">_byte</span> <span style="color:#f92672">||</span> <span style="color:#66d9ef">null</span>; <span style="color:#75715e">// 此节点上存储的字节
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">_isWord</span>  <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>; <span style="color:#75715e">// 边界保存，表示是否可以组成一个词
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">_count</span>   <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+}
+<span style="color:#a6e22e">Node</span>.<span style="color:#a6e22e">prototype</span> <span style="color:#f92672">=</span> {
+	<span style="color:#a6e22e">isWord</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>() {
+		<span style="color:#66d9ef">return</span> (<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">_isWord</span> <span style="color:#f92672">&amp;&amp;</span> (<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">_count</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>));
+	},
+	<span style="color:#a6e22e">asWord</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>() {
+		<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">_isWord</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>;
+	},
+	<span style="color:#a6e22e">addCount</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>() {
+		<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">_count</span><span style="color:#f92672">++</span>;
+	},
+	<span style="color:#a6e22e">getCount</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>() {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">_count</span>;
+	}
+};
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">trie</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Trie</span>();
+<span style="color:#a6e22e">trie</span>.<span style="color:#a6e22e">init</span>(<span style="color:#a6e22e">dict</span>);
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">trie</span>.<span style="color:#a6e22e">splitWords</span>(<span style="color:#a6e22e">words</span>);
+
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">group</span>(<span style="color:#e6db74">&#34;Trie 分词: &#34;</span>);
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;待分词的字符串: &#34;</span>, <span style="color:#a6e22e">words</span>);
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;分词结果:       &#34;</span>, <span style="color:#a6e22e">result</span>);
+<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">groupEnd</span>();
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/body&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/html&gt;</span>
+</code></pre></div><p><img src="http://static.oschina.net/uploads/space/2014/0221/010711_9R9s_182025.jpg" alt="img" loading="lazy" ></p>
+<h2 id="结束语">结束语</h2>
+<p>现在已经能正确的分词了，即使有相同的前缀也没有问题。我上面分词用到的Trie树称为标准Trie树，这种标准Trie树比较直观。对于需要存储中文的Trie树，也有很多是用数组的方式实现的，比如双数组Trie树(Double Array Trie，简称DAT)、三数组Trie树等，有兴趣的朋友可以去了解一下。</p>
+<p>本文只是简单的实现了中文分词，还有很多不足的地方。比如没有考虑未登录词的自动成词，人名、岐义等等。但对于一般的如关键词屏蔽和计算文本相似度等应用已经足够了。</p>
+
+    </div>
+
+    <div class="post-copyright">
+            
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rockwinder </span>
+                </p>
+            
+
+            
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://rockwinder.github.io/post/javascript_participles/>https://rockwinder.github.io/post/javascript_participles/</span>
+            </p>
+            
+            
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+
+    <div class="post-tags">
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> ·
+                <span><a href="https://rockwinder.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://rockwinder.github.io/post/javascript_confusion_encrypt/" class="prev" rel="prev" title="JavaScript混淆安全加固"><i class="iconfont icon-left"></i>&nbsp;JavaScript混淆安全加固</a>
+        
+        
+    </div>
+
+    <div class="post-comment">
+        
+            
+                <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.css">
+<script src="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.min.js"></script>
+<script>
+    const gitalk = new Gitalk({
+
+        clientID: '',
+        clientSecret: '',
+        repo: '',
+        owner: '',
+        admin: [''],
+        id: location.pathname, 
+        distractionFreeMode: false 
+    });
+    (function () {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+            return;
+        }
+        gitalk.render('gitalk-container');
+    })();
+</script>
+
+            
+        
+    </div>
+</article>
+                </div>
+            </main>
+            <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2017 - 2021</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i>
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://rockwinder.github.io/">Rockwinder</a> | </span>
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/Mogeko/Mogege" target="_blank" rel="external nofollow">Mogege</a></span>
+    </div>
+</footer>
+
+
+
+
+
+>
+<script defer src="/js/vendor_main.min.js"></script>
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script> pangu.spacingPage();</script>
+
+
+
+
+
+        </div>
+    </body>
+</html>
