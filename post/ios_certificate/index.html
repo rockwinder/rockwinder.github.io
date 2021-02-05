@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noodp"/>
+    <meta name="author" content="Rockwinder">
+    <meta name="description" content="Rockwinder 的个人博客">
+    
+    
+    <link rel="prev" href="https://rockwinder.github.io/post/javascript_participles/" />
+    
+    <link rel="canonical" href="https://rockwinder.github.io/post/ios_certificate/" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <title>
+        
+        
+            iOS 证书幕后原理 | Rockwinder`s Blog
+        
+    </title>
+    <meta name="title" content="iOS 证书幕后原理 | Rockwinder`s Blog">
+    
+<link rel="stylesheet" href="/css/main.min.css">
+
+
+    
+    
+ 
+
+<script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https:\/\/rockwinder.github.io\/"
+    },
+    "articleSection" : "post",
+    "name" : "iOS 证书幕后原理",
+    "headline" : "iOS 证书幕后原理",
+    "description" : "在日常的 iOS 开发中，无论是新手还是老鸟，总是会遇到各种与证书、签名有关的问题。当不了解其中的具体原理时，我们总是会被这些问题整得焦头烂额。对于",
+    "inLanguage" : "zh-cn",
+    "author" : "Rockwinder",
+    "creator" : "Rockwinder",
+    "publisher": "Rockwinder",
+    "accountablePerson" : "Rockwinder",
+    "copyrightHolder" : "Rockwinder",
+    "copyrightYear" : "2021",
+    "datePublished": "2021-02-05 17:47:24 \u002b0800 CST",
+    "dateModified" : "2021-02-05 17:47:24 \u002b0800 CST",
+    "url" : "https:\/\/rockwinder.github.io\/post\/ios_certificate\/",
+    "wordCount" : "6139",
+    "keywords" : [  "Rockwinder`s Blog"]
+}
+</script>
+
+  </head>
+    <body class="">
+        <div class="wrapper">
+            <nav class="navbar">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+    <div class="container">
+        
+            <div class="navbar-header header-back2home-logo">
+                <span class="logo_mark" >>$</span>
+                <a href="https://rockwinder.github.io/">
+                    <span class="logo_text" >cd /home/</span>
+                    <span class="logo_cursor" ></span>
+                </a>
+            </div>
+        
+        <div class="navbar-right">
+                
+                <span class="menu">
+                
+                <a class="menu-item" href="/post/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+                <span class="divide"></span>
+                <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a>
+                </span>
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+    
+        <progress class="content_progress" max="0" value="0"></progress>
+    
+     <div class="container">
+        <div class="navbar">
+            <div class="navbar-header header-logo">
+                    <a href="https://rockwinder.github.io/">Rockwinder`s Blog</a>
+            </div>
+            <div class="navbar-right">
+                <div><a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-dark-mode"></i></a></div>
+                <div class="menu-toggle">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                <nav class="mb-md">
+                    
+                    
+                        <a class="menu-item" href="/post/" title="">
+                            <h3>Blog</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/categories/" title="">
+                            <h3>Categories</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/tags/" title="">
+                            <h3>Tags</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                        <a class="menu-item" href="/about/" title="">
+                            <h3>About</h3>
+                            <div class="menu-active"></div>
+                        </a>
+                    
+                </nav>
+        </div>
+    </div>
+</nav>
+            <main class="main">
+                <div class="container">
+                    
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">iOS 证书幕后原理</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://rockwinder.github.io/" rel="author">Rockwinder</a> with ♥
+                <span class="post-time">
+                on <time datetime=2021-02-05 itemprop="datePublished">February 5, 2021</time>
+                </span>
+                in
+                
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        
+                        
+                        
+                          <a href="https://rockwinder.github.io/categories/ios/"> iOS, </a>
+                        
+                        
+                </span>
+                <span class="post-word-count">6139 words</span>
+        </div>
+    </header>
+
+    <div class="post-content">
+        
+
+        
+        
+            
+        
+
+        
+        
+        
+        
+        
+
+        
+        
+        
+
+        <p>在日常的 iOS 开发中，无论是新手还是老鸟，总是会遇到各种与证书、签名有关的问题。当不了解其中的具体原理时，我们总是会被这些问题整得焦头烂额。对于我也是如此，为了彻底理清其中的原理，我花了一些时间进行了研究并整理出这篇文章以供后续进行参考。</p>
+<h1 id="基本概念">基本概念</h1>
+<p>iOS 开发中各种证书的核心就是 <strong>非对称加密技术</strong>（即 <strong>公钥/私钥加密技术</strong>）。关于非对称加密的原理，本文不作介绍。</p>
+<p>为了深入了解证书幕后的原理，我们需要了解两个关键的概念：</p>
+<ul>
+<li><strong>数字签名</strong></li>
+<li><strong>数字证书</strong></li>
+</ul>
+<h2 id="数字签名">数字签名</h2>
+<p><strong>数字签名（Digital Signature）</strong> 是一种相当于现实世界中的盖章、签字的功能在数字信息领域中的实现。数字签名可以识别篡改和伪装。</p>
+<p>在数字签名技术中，有两种行为：</p>
+<ul>
+<li><strong>签名生成</strong></li>
+<li><strong>签名验证</strong></li>
+</ul>
+<h3 id="签名生成">签名生成</h3>
+<p>签名生成由通信中的发起方进行，其过程如下所示。首先对通信内容进行哈希，然后使用发送放的私钥进行加密，最终得到签名。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/signature-creation.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/signature-creation.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<h3 id="签名验证">签名验证</h3>
+<p>签名验证由通信中的接收方进行，其过程如下所示。一般而言，发送方会把 <strong>消息</strong>、<strong>签名</strong> 一起发送给接收方。接收方首先使用发送方的公钥对签名进行解密，计算得出一个摘要。然后使用消息进行哈希，计算得出另一个摘要。最后，判断两个摘要是否相等，如果相等则说明接收到的消息没有被第三方进行篡改。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/signature-validation.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/signature-validation.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p>那么接收方是如何获取到发送方的公钥的呢？接收方又是如何确定该公钥就是属于发送方的呢？这就是数字证书要做到事。</p>
+<h2 id="数字证书">数字证书</h2>
+<p><strong>数字证书（Digital Certificate）</strong> 是一种相当于现实世界中身份证的功能在数字信息领域中的实现。数字证书包含了个人或机构的 <strong>身份信息</strong> 及其 <strong>公钥</strong>，因此也称为 <strong>公钥证书（Public-Key Certificate，PKC）</strong>。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/my-certificate-example.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/my-certificate-example.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p>类似于身份证是由权威的公安局颁发，公钥证书也是由权威的 <strong>认证机构（Certificate Authority，CA）</strong> 颁发。认证机构向接收方提供发送方的证书，证书中包含了发送方的身份信息和公钥。为了防止证书在颁发过程中被篡改，认证机构会将身份信息和公钥作为消息，用 <strong>CA 私钥</strong> 进行签名，进而将 <strong>身份信息</strong>、<strong>公钥</strong>、<strong>签名</strong> 一起放入证书，如下图所示。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/certificate.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/certificate.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<h2 id="根证书">根证书</h2>
+<p>接收方得到发送方证书时，通过 CA 公钥对证书进行签名验证。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/certificate-validation.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/certificate-validation.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p>不过，需要注意的是，很多情况下，CA 公钥则又是由一个更加权威的机构颁发。</p>
+<p>类似于地方公安局的证书是由市级公安局颁发，市级公安局的证书又是由省级公安局颁发。证书是具有信任链（Chain of Trust）的，<strong>根证书（Root Certificate）</strong> 是信任源，即信任链的起源。</p>
+<p>根证书的颁发者被称为 <strong>Root Certificate Authority（Root CA）</strong>。某一认证领域内的根证书是 Root CA 自行颁发给自己的证书（Self-signed Certificate），安装证书意味着对这个 CA 认证中心的信任。</p>
+<p>根据证书在信任链中所处的位置，可以将证书分为三种：</p>
+<ul>
+<li><strong>根证书（Root Certificate）</strong></li>
+<li><strong>中间证书（Intermediate Certificate）</strong></li>
+<li><strong>叶子证书（Leaf Certificate）</strong></li>
+</ul>
+<p>这里就有一个根本性的问题：<strong>如何保证根证书是可信的？</strong></p>
+<p>事实上，根证书都是随软件一起安装的，如：操作系统安装时会内置一份可信的根证书列表。</p>
+<h1 id="ios-证书">iOS 证书</h1>
+<p>在介绍了数字签名（包括：签名生成、签名验证）和数字证书（根证书）的基本概念之后，我们现在来介绍 iOS 开发中的相关证书。</p>
+<p>首先，我们来看一下 MacOS 系统中关于 iOS 开发证书的信任链示例（通过“钥匙串”查看）：</p>
+<ul>
+<li>
+<p>Apple Root Certificate Authority</p>
+<p>：根证书</p>
+<ul>
+<li>
+<p>Apple Worldwide Developer Relations Certification Authority</p>
+<p>：中间证书</p>
+<ul>
+<li><strong>iPhone Developer: 楚权 包(XXXXXXX)</strong>：叶子证书</li>
+<li><strong>iPhone Distribution: Apple Tech</strong>：叶子证书</li>
+<li><strong>Apple Development: <a href="mailto:baocq@apple.com">baocq@apple.com</a></strong>：叶子证书</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/keychain-trust-of-chain.jpeg?x-oss-process=image/resize,w_1000"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/keychain-trust-of-chain.jpeg?x-oss-process=image/resize,w_1000" alt="img" loading="lazy" ></a></p>
+<p>根证书 <code>Apple Root Certificate Authority</code> 是在 MacOS 操作系统安装时内置的，是 Apple Root CA 自行颁发的。</p>
+<p>中间证书 <code>Apple World Developer Relations Certificate Authority</code> （实际文件为 <code>AppleWWDRCA.cer</code>）是在Xcode 安装时内置的，是 Apple Root CA 颁发的。虽然 <code>AppleWWDRCA.cer</code> 是中间证书，但是对于 iOS 开发分类来说，它就是 <strong>开发根证书</strong>。</p>
+<p>我们开发所使用的证书都是叶子证书，是 Apple Worldwide Developer Relations Certification Authority 颁发的。</p>
+<p>那么，我们开发所示用的证书是如何生成的呢？下面我们来介绍一下如何申请开发证书。</p>
+<h2 id="申请原理">申请原理</h2>
+<p>下图所示，是证书申请的基本原理，可分为以下几个步骤：</p>
+<ul>
+<li>开发者在本地生成密钥对，并提供开发者的身份信息。</li>
+<li>将密钥对中的公钥、身份信息发送给 CA。</li>
+<li>CA 使用 CA 私钥对开发者的公钥、身份信息进行签名。</li>
+<li>CA 将开发者的公钥、身份信息、签名组装成证书以供下载。</li>
+</ul>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/certificate-creation.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/certificate-creation.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<h2 id="申请方法">申请方法</h2>
+<p>上述介绍 iOS 开发证书的申请原理。在 iOS 开发中，一般由两种申请方法：</p>
+<ul>
+<li><strong>CertificateSigningRequest</strong></li>
+<li><strong>Xcode 自动申请</strong></li>
+</ul>
+<p>下面我们依次进行介绍。</p>
+<h3 id="certificatesigningrequest">CertificateSigningRequest</h3>
+<p>首先，通过 “钥匙串” 菜单栏选择 【从证书颁发机构请求证书…】。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/certificate-creation02.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/certificate-creation02.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p>其次，填写用户的身份信息（电子邮箱），并勾选【存储到磁盘】。点击【继续】后将会保存一个 <code>CSR</code> 文件（<code>CertificateSigningRequest.certSigningRequest</code>）至本地。</p>
+<p>注意，这个过程期间会生成一对非对称密钥对，<code>CertificateSigningRequest.certSigningRequest</code> 本质上包含了 <strong>开发者信息</strong>和 <strong>公钥</strong>。<strong>私钥</strong> 则始终保存在开发者的 Mac 中。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/certificate-creation03.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/certificate-creation03.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p>然后，在开发者网站（扮演了 AppleWDRCA 的角色）上传 <code>CSR</code> 文件，由 CA 进行签名并生成开发者证书。开发者证书始终保留在开发者网站上，开发者可以删除（Revoke）已注册的证书。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/certificate-creation04.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/certificate-creation04.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p>最后，从开发者网站上下载开发者证书至 Mac，双击后即可安装。</p>
+<h3 id="xcode-自动申请">Xcode 自动申请</h3>
+<p>通过，Xcode 菜单【Preference…】-&gt;【Account】-&gt;【Apple IDs】-&gt;【＋】，登录开发者账号。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/certificate-creation05.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/certificate-creation05.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p>登录成功后，“钥匙串”会自动导入一份证书（包含一份密钥对）。开发者网站也会注册一份证书。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/certificate-creation07.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/certificate-creation07.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/certificate-creation06.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/certificate-creation06.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p>Xcode 自动申请是一种一键式的申请方式，推荐开发者使用。</p>
+<h2 id="使用">使用</h2>
+<p>iOS 证书包含开发者的信息以及开发者的公钥。Xcode 导入证书后，对 App 打包时 Xcode 会根据证书从 Keychain 中找到与之匹配的私钥，并使用私钥对 App 进行签名。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/certificate-usage.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/certificate-usage.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p>当 App 安装到真机时，真机使用开发者公钥（App 中包含开发者公钥）对 App 进行签名验证，从而确保来源可信。App 安装时具体的验证过程我们后文再说。</p>
+<h2 id="分类">分类</h2>
+<p>iOS 证书可以分为两种：</p>
+<ul>
+<li><strong>Development</strong>：开发证书，用来开发和调试 App。一般证书名是 <code>iPhone Developer: xxx</code>。如果是多人协作的开发者账号，任意成员都可以申请自己的 Development 证书。</li>
+<li><strong>Distribution</strong>：发布证书，用来发布 App。一般证书名是 <code>iPhone Distribution: xxx</code>。只有管理员以上身份的开发者账号才可以申请，因此可以控制提交权限的范围。</li>
+</ul>
+<p>下文主要针对 iOS App 开发调试过程中的开发证书进行介绍。</p>
+<h1 id="授权文件entitlements">授权文件（Entitlements）</h1>
+<p><strong>沙盒（Sandbox）</strong> 技术是 iOS 安全体系中非常重要的一项技术，其目的是 <strong>限制 App 的行为</strong>，如：可读写的路径、允许访问的硬件、允许使用的服务等等。因此，如果代码出现漏洞，也不会影响沙盒外的系统。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/sandbox.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/sandbox.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p>沙盒使用 <strong>授权文件（Entitlements）</strong> 声明 App 的权限。如果 App 中使用到了某项沙盒限制的功能，但是没有声明对应的权限，运行到相关代码时会直接 Crash。</p>
+<p>新建的工程是没有 Entitlements 文件的，如果在 【Capabilities】中开启所需权限后，Xcode 会自动生成 Entitlements 文件，并将对应的权限声明添加到该文件中。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/entitlements02.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/entitlements02.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/entitlements01.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/entitlements01.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p>Entitlements 文件是一个 <code>xml</code> 格式的 <code>plist</code> 文件，在项目中一般以 <code>.entitlements</code> 为后缀，其内容如下：</p>
+<pre><code> &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+ &lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;
+&lt;plist version=&quot;1.0&quot;&gt;
+&lt;dict&gt;
+    &lt;key&gt;aps-environment&lt;/key&gt;
+    &lt;string&gt;production&lt;/string&gt;
+    &lt;key&gt;com.apple.developer.associated-domains&lt;/key&gt;
+    &lt;array&gt;
+        &lt;string&gt;applinks:xxxx.companyname.com&lt;/string&gt;
+    &lt;/array&gt;
+    &lt;key&gt;com.apple.security.application-groups&lt;/key&gt;
+    &lt;array&gt;
+        &lt;string&gt;group.com.companyname&lt;/string&gt;
+    &lt;/array&gt;
+&lt;/dict&gt;
+&lt;/plist&gt;
+</code></pre><p>事实上，Entitlements 文件的内容并不是全部的授权声明。因为缺省状态下，App 默认会包含与 TeamID 及 App ID 相关的权限声明，如下：</p>
+<pre><code>&lt;dict&gt;
+    &lt;key&gt;keychain-access-groups&lt;/key&gt;
+    &lt;array&gt;
+        &lt;string&gt;xxxxxxxxxx.*&lt;/string&gt;
+    &lt;/array&gt;
+    &lt;key&gt;get-task-allow&lt;/key&gt;
+    &lt;true/&gt;
+    &lt;key&gt;application-identifier&lt;/key&gt;
+    &lt;string&gt;xxxxxxxxxx.test.CodeSign&lt;/string&gt;
+    &lt;key&gt;com.apple.developer.team-identifier&lt;/key&gt;
+    &lt;string&gt;xxxxxxxxxx&lt;/string&gt;
+&lt;/dict&gt;
+</code></pre><p>其中 <code>get-task-allow</code> 代表是否允许被调试，它在开发阶段是必需的一项权限，而在进行Archive打包用于上架时会被去掉。</p>
+<p><strong>注意：代码签名时，会将 Entitlements 文件（如有）与上述缺省内容进行合并，得到最终的授权文件，并嵌入二进制代码中，作为被签名内容的一部分，由代码签名保证其不可篡改性。</strong></p>
+<h1 id="app-id">App ID</h1>
+<p><strong>App ID</strong> 即 Product ID，用于标识一个或一组 App。</p>
+<p>App ID 字符串通常以 <strong>反域名（reverse-domain-name）</strong> 格式的 Company Identifier（Company ID）作为前缀（Prefix/Seed），一般不超过 255 个 ASCII 字符。</p>
+<p>App ID 全名会被追加 Application Identifier Prefix（一般为 TeamID）。App ID 可以分为两种：</p>
+<ul>
+<li><strong>Explicit App ID</strong>：唯一的 App ID，用于标识一个应用程序。如：<code>com.apple.garageband</code> 用于标识 Bundle Identifier 为 <code>com.apple.garageband</code> 的 App。</li>
+<li><strong>Wildcard App ID</strong>：含有通配符的 App ID，用于标识一组应用程序。如：<code>com.apple.*</code> 用于标识 Bundle Identifier 以 <code>com.apple.</code> 开头（苹果公司）的所有应用程序。</li>
+</ul>
+<p>开发者可在 Developer Member Center 网站上注册（Register）或删除（Delete）已注册的 App IDs。</p>
+<p>在 Xcode 中，配置项 <code>Xcode Target -&gt; Info -&gt; Bunlde Identifier</code> 必须与 App ID 是一致的（Explicit）或匹配的（Wildcard）。</p>
+<p><strong>注意：注册 App ID 时，允许开发者在【Capabilities】中勾选所需的权限。这与上述的授权文件 Entitlements 相匹配。</strong></p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/appid01.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/appid01.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<h1 id="设备">设备</h1>
+<p><strong>设备（Device）</strong> 即用于开发调试的 iOS 设备。每台 Apple 设备使用 <strong>UUID（Unique Device Identifier）</strong> 来唯一标识，即设备 ID。</p>
+<p>Apple Member Center 网站个人账号下的 <strong>Device</strong> 中包含注册过的所有可用于开发和测试的设备，普通个人开发账号每年累计最多注册 100 个设备。</p>
+<p>开发者可在网站上注册或启用/禁用（Enable/Disable）已注册的 Device。</p>
+<p>本文的 Device 是指连接到 macOS/Xcode 被授权用于开发测试的 iOS 设备（iPhone/iPad）。</p>
+<h1 id="供应配置文件provisioning-profile">供应配置文件（Provisioning Profile）</h1>
+<h2 id="创建">创建</h2>
+<p><strong>供应配置文件（Provisioning Profile，简称 pp）</strong> 包含了上述所有内容：</p>
+<ul>
+<li><strong>App ID</strong>（App ID 在注册时可声明所需沙盒权限，所以包含了 Entitlements）</li>
+<li><strong>证书</strong></li>
+<li><strong>设备 ID</strong></li>
+</ul>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/provisioning-profile.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/provisioning-profile.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p>一个 Provisioning Profile 对应一个 Explicit ID 或 Wildcard ID。在网站上手动创建一个 Provisioning Profile 时，需依次指定上述三项内容：</p>
+<ul>
+<li>App ID：单选（沙盒权限，可多选）</li>
+<li>证书：Certificates，可多选，对应多个开发者</li>
+<li>设备：Devices，可多选，对应更多个开发设备</li>
+</ul>
+<p>开发者可以下载 Provisioning Profile 文件，即一个 <code>.mobileprovision</code> 文件。开发者也可以删除（Delete）已注册的 Provisioning Profile。</p>
+<p>Provisioning Profile 会配置到 <code>Xcode -&gt; Target -&gt; Signing &amp; Capabilities -&gt; Provisioning Profile</code> 中。</p>
+<p>Provisioning Profile 默认保存在本地的 <code>~/Library/MobileDevice/Provisioning Profiles</code> 目录下。</p>
+<h2 id="构成">构成</h2>
+<p><code>.mobileprovision</code> 包含以下这些字段及内容：</p>
+<ul>
+<li>
+<p><code>Name</code>：即 <code>mobileprovision</code> 文件。</p>
+</li>
+<li>
+<p><code>UUID</code>：即 <code>mobileprivision</code> 文件的真实文件名，是一个唯一标识。</p>
+</li>
+<li>
+<p><code>TeamName</code>：即 Apple ID 账号名。</p>
+</li>
+<li>
+<p><code>TeamIdentifier</code>：即 Team Identity。</p>
+</li>
+<li>
+<p><code>AppIDName</code>：即 explicit/wildcard Apple ID name（ApplicationIdentifierPrefix）。</p>
+</li>
+<li>
+<p><code>ApplicationIdentifierPrefix</code>：即完整 App ID 的前缀。</p>
+</li>
+<li>
+<p><code>ProvisionedDevices</code>：该 <code>.mobileprovision</code> 授权的所有开发设备的 UUID。</p>
+</li>
+<li>
+<p><code>DeveloperCertificates</code>：该 <code>.mobileprovision</code> 允许对应用程序进行签名的所用证书，不同证书对应不同的开发者。如果使用不在这个列表中的证书进行签名，会出现 <code>code signing failed</code> 相关报错。</p>
+</li>
+<li>
+<pre><code>Entitlements
+</code></pre><p>：包含了一组键值对。</p>
+<pre><code>&lt;key&gt;
+</code></pre><p>、</p>
+<pre><code>&lt;dict&gt;
+</code></pre><p>。</p>
+<ul>
+<li><code>keychain-access-groups</code>：<code>$(AppIdentifierPrefix)</code></li>
+<li><code>application-identifier</code>：带前缀的全名。如：<code>$(AppIdentifierPrefix)com.apple.garageband</code></li>
+<li><code>com.apple.security.application-groups</code>：App Group ID。</li>
+<li><code>com.apple.developer.team-identifier</code>：同 Team Identifier。</li>
+</ul>
+</li>
+</ul>
+<h2 id="签名--打包">签名 &amp; 打包</h2>
+<p>首先，Xcode 会检查 Signing（entitlement、certificate）配置是否与 Provisioning Profile 相匹配，否则编译会报错。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/signing01.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/blog-images/signing01.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p>其次，Xcode 会检查 Signing &amp; Capabilities 配置的证书是否在本机 Keychain Access 中存在对应的 Public/Private Key Pair，否则编译会报错。</p>
+<p>然后，Xcode 证书在本机 Keychain Access 匹配的 Key Pair 的私钥对应用程序 <strong>内容（Executable Code，resources such as images and nib files are not signed）</strong> 进行签名（CodeSign）。<strong>注意：Entitlements 文件也会被嵌入到内容中进行签名。</strong></p>
+<p>最终，签名、Provisioning Profile、应用程序都会被打包到 <code>.ipa</code> 中</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/provisioning-profile-signing.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/provisioning-profile-signing.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<h3 id="ipa-文件"><code>.ipa</code> 文件</h3>
+<p>我们可以用 <code>file</code> 命令来查看 <code>.ipa</code> 文件，从输出结果可以看出它是一个压缩文件。对 <code>.ipa</code> 文件解压后会得到一个 <code>Payload</code> 文件，里面包含了 <code>.app</code> 目录。</p>
+<pre><code>$ file Solar_200319-1858_r372ce72fe.ipa
+Solar_200319-1858_r372ce72fe.ipa: Zip archive data, at least v1.0 to extract
+</code></pre><h4 id="app-文件"><code>.app</code> 文件</h4>
+<p>以 <code>Solar.app</code> 为例，<code>.app</code> 目录下主要有以下这些类型的文件：</p>
+<ul>
+<li><strong>可执行文件</strong>：以项目名称命名的可执行文件。如：<code>Solar</code>。</li>
+<li><strong><code>xxx.bundle</code></strong>：资源文件，对应不同的 SDK 和 Pod。</li>
+<li><strong><code>xxx.lproj</code></strong>：多语言本地化资源文件。每种语言单独定义其资源，包含：图片、文本、Storyboard、Xib 等。</li>
+<li><strong><code>Frameworks</code></strong>：包含了 app 使用的第三方静态库、Swift 动态库。</li>
+<li><strong><code>Info.plist</code></strong>：app 的相关配置，包括：Bundle Identifier、可执行文件名等。</li>
+<li><strong><code>embedded.mobileprovision</code></strong>：供应配置文件（Provisioning Profile）。</li>
+<li><strong><code>_CodeSignature/CodeResources</code></strong>：一个 <code>plist</code> 文件，保存签名时每个文件的哈希值（摘要），这些哈希值并不需要都进行加密，因为非对称加密的性能是比较差的，全部都加密只会拖慢签名和校验的速度。</li>
+</ul>
+<h2 id="验证--运行">验证 &amp; 运行</h2>
+<p>在真机上运行测试包和正式包时，系统对两者的验证有所不同。简而言之，测试包在设备上进行了完整的签名验证；正式包则把验证过程交给了 App Store，App Store 验证通过后重新进行一次签名，设备下载正式包后进行的验证过程则简化很多。</p>
+<p>下面我们首先介绍一下测试包的验证过程。</p>
+<h3 id="测试包">测试包</h3>
+<p>当在设备上安装运行时，会对 App 进行验证。</p>
+<p>首先，设备系统会对 App 中的 bundle ID、entitlements、certificate 与 Provisioning Profile 中的 App ID、entitlements、certificates 进行匹配验证，否则无法启动 App。</p>
+<p>其次，设备系统使用本地内置的 CA 公钥对 Provisioning Profile 中匹配的 certificate 进行签名验证，从而确认匹配到的证书的合法性。</p>
+<p>然后，设备系统使用 Provisioning Profile 中的匹配的，且经过 CA 验证过的 certificate（即打包应用程序的开发者的证书）中取出公钥，对 App 进行签名验证，否则无法启动 App。</p>
+<p>最后，设备系统会将设备的 Device ID 与 Provisioning Profile 中的 Devices 的 Device ID 进行匹配，否则无法启动 App。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/provisioning-profile-validation.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/provisioning-profile-validation.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<h3 id="正式包">正式包</h3>
+<p>假如你有一台越狱的设备，查看任意一个从 App Store 上下载的 App，你会发现里面没有 <code>embedded.mobileprovision</code> 文件，因为 App Store 已经完成了对 App 的验证（<strong>类似于上述测试包的验证过程</strong>）。当 App 通过验证后，Apple Store 会对 App 进行重新签名，如下图所示。重新签名的内容将不再包含 Provisioning Profile，最终的 ipa 文件也不包含它。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/app-store-resigning.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/app-store-resigning.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<p>当设备从 App Store 下载 App 时，会直接使用设备上的 CA 公钥对 ipa 进行签名验证，如下图所示。与上述测试包的签名验证相比，正式包的签名验证简化了很多，因为有一部分验证工作已经由 App Store 完成了。</p>
+<p><a href="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/app-store-validation.png?x-oss-process=image/resize,w_800"><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/app-store-validation.png?x-oss-process=image/resize,w_800" alt="img" loading="lazy" ></a></p>
+<h1 id="总结">总结</h1>
+<p>有上述可知，非对称加密贯穿于 iOS 开发之中。当我们在开发中遇到签名、证书相关的问题时，我们只要结合证书幕后的原理，很容易就能找到解决办法。</p>
+<h1 id="参考">参考</h1>
+<ol>
+<li>《图解密码技术》</li>
+<li><a href="https://blog.csdn.net/phunxm/article/details/42685597">iOS Provisioning Profile(Certificate)与Code Signing详解</a></li>
+<li><a href="https://www.jianshu.com/p/178104408615">iOS 掉签的概念和原理</a></li>
+<li><a href="https://www.jianshu.com/p/e33412176310">iOS 浅谈 APP ipa包的结构</a></li>
+<li><a href="https://www.jianshu.com/p/c33db8e95e6d">ipa 目录结构及构建过程</a></li>
+<li><a href="https://juejin.im/entry/5bb831b4f265da0aa52921ca">Library vs Framework in iOS</a></li>
+<li><a href="https://juejin.im/post/5b90ea53e51d450ea131ef81">iOS语言国际化/本地化-实践总结</a></li>
+<li><a href="https://www.jianshu.com/p/5d9955bf4c55">iOS 应用重签名</a></li>
+<li><a href="http://xelz.info/blog/2019/01/11/ios-code-signature-1/">细说iOS代码签名(一)</a></li>
+<li><a href="http://xelz.info/blog/2019/01/11/ios-code-signature-2/">细说iOS代码签名(二)</a></li>
+<li><a href="http://xelz.info/blog/2019/01/11/ios-code-signature-3/">细说iOS代码签名(三)</a></li>
+<li><a href="http://xelz.info/blog/2019/01/11/ios-code-signature-4/">细说iOS代码签名(四)</a></li>
+<li><a href="https://confluence.zhenguanyu.com/pages/viewpage.action?pageId=30677779">搜题 Configurations 的说明</a></li>
+<li><a href="https://www.zhihu.com/question/20308474">iOS 开发者中的公司账号与个人账号之间有什么区别？</a></li>
+<li><a href="https://wenghengcong.com/posts/3c332106/">逆向（七）重签名</a></li>
+</ol>
+
+    </div>
+
+    <div class="post-copyright">
+            
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rockwinder </span>
+                </p>
+            
+
+            
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://rockwinder.github.io/post/ios_certificate/>https://rockwinder.github.io/post/ios_certificate/</span>
+            </p>
+            
+            
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+
+    <div class="post-tags">
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> ·
+                <span><a href="https://rockwinder.github.io/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://rockwinder.github.io/post/javascript_participles/" class="prev" rel="prev" title="JavaScript: 实现简单的中文分词"><i class="iconfont icon-left"></i>&nbsp;JavaScript: 实现简单的中文分词</a>
+        
+        
+    </div>
+
+    <div class="post-comment">
+        
+            
+                <div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.css">
+<script src="https://cdn.bootcss.com/gitalk/1.5.2/gitalk.min.js"></script>
+<script>
+    const gitalk = new Gitalk({
+
+        clientID: '',
+        clientSecret: '',
+        repo: '',
+        owner: '',
+        admin: [''],
+        id: location.pathname, 
+        distractionFreeMode: false 
+    });
+    (function () {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+            return;
+        }
+        gitalk.render('gitalk-container');
+    })();
+</script>
+
+            
+        
+    </div>
+</article>
+                </div>
+            </main>
+            <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2017 - 2021</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i>
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://rockwinder.github.io/">Rockwinder</a> | </span>
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/Mogeko/Mogege" target="_blank" rel="external nofollow">Mogege</a></span>
+    </div>
+</footer>
+
+
+
+
+
+>
+<script defer src="/js/vendor_main.min.js"></script>
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script> pangu.spacingPage();</script>
+
+
+
+
+
+        </div>
+    </body>
+</html>
